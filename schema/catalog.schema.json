@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.internal/ai-toolkit/catalog.schema.json",
+  "title": "AI toolkit catalog",
+  "description": "Contract between the catalog editor and the viewer. Version 1.2 replaces the separate manager and developer texts with one explanation (why, what, how) and adds difficulty ratings for installation and usage. 1.2 is not compatible with 1.0 or 1.1; the viewer reads 1.2 only. Structural rules live here; cross-reference rules (see x-crossReferenceRules) must be checked in code by the editor on export and by the viewer on load.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "meta", "studs", "platforms", "bricks", "recipes"],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.2",
+      "description": "The viewer rejects any other value."
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "updated"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "description": { "type": "string", "maxLength": 400 },
+        "language": { "type": "string", "pattern": "^[a-z]{2}(-[A-Z]{2})?$", "default": "en" },
+        "updated": { "type": "string", "format": "date" },
+        "owner": { "type": "string", "maxLength": 80 }
+      }
+    },
+    "studs": {
+      "type": "array",
+      "description": "Small fixed vocabulary of connection types. A brick offers some studs and accepts others. Drawn as cables between bricks, running from the brick that uses a capability to the brick that offers it.",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/stud" }
+    },
+    "platforms": {
+      "type": "array",
+      "description": "Infrastructure that bricks and other platforms run on: host apps, runtimes, operating systems. Shown in the optional infrastructure layer of the details panel, with the foundation at the bottom. May be empty.",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/platform" }
+    },
+    "bricks": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/brick" }
+    },
+    "recipes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/recipe" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 48,
+      "description": "Stable lowercase slug. Never change an id after publishing; references depend on it."
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "url"],
+      "properties": {
+        "label": { "type": "string", "maxLength": 60 },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "why": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600,
+      "description": "Why it matters: the value, in plain language."
+    },
+    "what": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600,
+      "description": "What it is and what it does."
+    },
+    "how": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": { "type": "string", "minLength": 1, "maxLength": 300 },
+      "description": "Ordered steps to get started: installation and first use."
+    },
+    "rating": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stars", "why"],
+      "properties": {
+        "stars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "1 is very easy, 5 is very hard."
+        },
+        "why": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "description": "The reason for this rating, for example the initial manual connection of all tools."
+        }
+      }
+    },
+    "difficulty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installation", "usage"],
+      "properties": {
+        "installation": { "$ref": "#/$defs/rating" },
+        "usage": { "$ref": "#/$defs/rating" }
+      }
+    },
+    "stud": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "description": { "type": "string", "maxLength": 200 }
+      }
+    },
+    "platform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "kind", "summary"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "kind": {
+          "enum": ["host-app", "runtime", "os", "container", "cloud", "other"],
+          "description": "host-app: an application that hosts a brick, shown as 'running inside' (VS Code). All other kinds are shown as 'running on' (Node.js, Python, an operating system, Docker, a cloud service)."
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140,
+          "description": "One line answering: what is this?"
+        },
+        "why": { "$ref": "#/$defs/why" },
+        "what": { "$ref": "#/$defs/what" },
+        "how": { "$ref": "#/$defs/how" },
+        "difficulty": { "$ref": "#/$defs/difficulty" },
+        "variants": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+          "description": "Display only. Concrete flavours grouped under this platform, for example Windows, macOS, Linux."
+        },
+        "runsOn": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" },
+          "description": "Platform ids this platform runs on. Alternatives: one of them is enough. Must not form a cycle."
+        },
+        "links": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/link" }
+        }
+      }
+    },
+    "brick": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "category", "summary", "why", "what", "how", "difficulty", "provides", "accepts", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "category": {
+          "enum": ["ai-assistant", "automation", "browser", "connector", "data", "other"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140,
+          "description": "One line answering: what is this?"
+        },
+        "why": { "$ref": "#/$defs/why" },
+        "what": { "$ref": "#/$defs/what" },
+        "how": { "$ref": "#/$defs/how" },
+        "difficulty": { "$ref": "#/$defs/difficulty" },
+        "provides": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" },
+          "description": "Stud ids this brick offers to others."
+        },
+        "accepts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" },
+          "description": "Stud ids this brick can plug into. Brick A uses brick B when A.accepts and B.provides share a stud."
+        },
+        "runsOn": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" },
+          "description": "Platform ids this brick runs on or inside. Alternatives: one of them is enough (Node.js or Python). Leave out when unknown."
+        },
+        "status": {
+          "enum": ["available", "planned", "restricted"],
+          "description": "available: set up and usable. planned: on the roadmap. restricted: owned but needs approval."
+        },
+        "icon": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Icon name from the icon set used by the viewer."
+        },
+        "color": {
+          "enum": ["purple", "teal", "coral", "pink", "gray", "blue", "green", "amber", "red"]
+        },
+        "links": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/link" }
+        }
+      }
+    },
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "bricks", "why", "what", "how", "difficulty"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "bricks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" },
+          "description": "Brick ids that make up this setup. The recipe appears when all of them are picked."
+        },
+        "why": { "$ref": "#/$defs/why" },
+        "what": { "$ref": "#/$defs/what" },
+        "how": { "$ref": "#/$defs/how" },
+        "difficulty": { "$ref": "#/$defs/difficulty" },
+        "example": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "One concrete scenario that makes the result tangible."
+        },
+        "tags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "maxLength": 30 }
+        }
+      }
+    }
+  },
+  "x-crossReferenceRules": [
+    "stud ids are unique",
+    "brick ids and platform ids are unique, and no id is used by both a brick and a platform (a selection must be unambiguous)",
+    "recipe ids are unique",
+    "every id in brick.provides and brick.accepts exists in studs",
+    "every id in brick.runsOn and platform.runsOn exists in platforms",
+    "the platform.runsOn graph has no cycles (error)",
+    "every id in recipe.bricks exists in bricks",
+    "every recipe with 2+ bricks is connected: the bricks form one group when linked by provides/accepts, otherwise warn",
+    "every stud is used by at least one brick (warn)",
+    "every platform is used by at least one brick or platform (warn)",
+    "when platforms exist, a brick without runsOn is reported as having no infrastructure defined (warn)"
+  ]
+}

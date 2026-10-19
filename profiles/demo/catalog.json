@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "1.2",
+  "meta": {
+    "title": "Our AI and automation toolkit",
+    "description": "Sample catalog. Texts and ratings are placeholders to be replaced with your own.",
+    "language": "en",
+    "updated": "2026-10-19"
+  },
+  "studs": [
+    { "id": "mcp", "label": "MCP", "description": "Model Context Protocol connection" },
+    { "id": "browser", "label": "Browser", "description": "Drives or reads a web browser" },
+    { "id": "workflow", "label": "Workflow", "description": "Triggers or runs automations" }
+  ],
+  "platforms": [
+    {
+      "id": "vs-code",
+      "label": "VS Code",
+      "kind": "host-app",
+      "summary": "Code editor that hosts Copilot and its agent mode.",
+      "why": "Copilot does not run on its own. Everyone who uses it needs the editor.",
+      "what": "Microsoft's code editor. Extensions such as GitHub Copilot run inside it.",
+      "how": [
+        "Install VS Code from the company software portal or the official download page.",
+        "Open it and sign in to the extensions you need."
+      ],
+      "difficulty": {
+        "installation": { "stars": 1, "why": "A standard installer, usually already present on developer machines." },
+        "usage": { "stars": 2, "why": "Familiar to developers, new for everyone else." }
+      },
+      "runsOn": ["desktop-os"]
+    },
+    {
+      "id": "nodejs",
+      "label": "Node.js",
+      "kind": "runtime",
+      "summary": "JavaScript runtime for MCP servers started with npx.",
+      "why": "Playwright MCP is started through Node.js, so the runtime has to be there first.",
+      "what": "A JavaScript runtime that runs outside the browser. Playwright MCP needs version 18 or newer.",
+      "how": [
+        "Install Node.js 18 or newer.",
+        "Check it in a terminal with node --version."
+      ],
+      "difficulty": {
+        "installation": { "stars": 2, "why": "An installer is enough, but versions must match what the tools expect." },
+        "usage": { "stars": 1, "why": "Runs in the background. Nobody has to use it directly." }
+      },
+      "runsOn": ["desktop-os"]
+    },
+    {
+      "id": "python",
+      "label": "Python",
+      "kind": "runtime",
+      "summary": "Runtime for MCP servers built with the Python SDK.",
+      "what": "A programming language runtime. MCP servers written with the official Python SDK run on it.",
+      "runsOn": ["desktop-os"]
+    },
+    {
+      "id": "desktop-os",
+      "label": "Desktop OS",
+      "kind": "os",
+      "summary": "The common desktop operating systems.",
+      "variants": ["Windows", "macOS", "Linux"]
+    }
+  ],
+  "bricks": [
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "category": "ai-assistant",
+      "summary": "AI assistant in the editor that can use tools.",
+      "why": "Lets people hand routine work to an AI assistant without leaving the editor, and gives teams one place to reach every connected tool.",
+      "what": "GitHub's AI assistant inside VS Code. In agent mode it plans a task and calls tools that are connected through MCP.",
+      "how": [
+        "Install the GitHub Copilot extension in VS Code.",
+        "Sign in with your company GitHub account.",
+        "Switch the chat to agent mode and add the MCP servers it should use."
+      ],
+      "difficulty": {
+        "installation": { "stars": 2, "why": "A standard extension and a company sign-in. Adding MCP servers is a separate manual step." },
+        "usage": { "stars": 2, "why": "Works through chat. The results still need a human review." }
+      },
+      "provides": ["workflow"],
+      "accepts": ["mcp"],
+      "runsOn": ["vs-code"],
+      "status": "available",
+      "color": "purple"
+    },
+    {
+      "id": "playwright-mcp",
+      "name": "Playwright MCP",
+      "category": "connector",
+      "summary": "Lets an AI assistant operate a browser.",
+      "why": "Repeats browser tasks and checks without anyone writing test code, so non-developers can ask for them in plain language.",
+      "what": "An MCP server from Microsoft that gives an AI assistant the browser actions of Playwright. It can drive Edge.",
+      "how": [
+        "Install Node.js 18 or newer.",
+        "Add the server to the MCP settings of your client with npx and @playwright/mcp@latest.",
+        "Select Edge with the msedge browser option."
+      ],
+      "difficulty": {
+        "installation": { "stars": 3, "why": "The first time, every piece is connected by hand: Node.js, the MCP entry and the browser option." },
+        "usage": { "stars": 2, "why": "Describe the check in plain language, then review what it did." }
+      },
+      "provides": ["mcp"],
+      "accepts": ["browser"],
+      "runsOn": ["nodejs"],
+      "status": "available",
+      "color": "teal"
+    },
+    {
+      "id": "custom-mcp-server",
+      "name": "Custom MCP server",
+      "category": "connector",
+      "summary": "Any MCP server your teams write themselves.",
+      "why": "Connects your own internal systems to the AI assistant without waiting for a vendor.",
+      "what": "An MCP server built by your team with the official TypeScript or Python SDK.",
+      "how": [
+        "Pick Node.js or Python.",
+        "Build the server with the matching official SDK.",
+        "Register it in the MCP settings of your client."
+      ],
+      "difficulty": {
+        "installation": { "stars": 4, "why": "Someone has to write, test and host the server first." },
+        "usage": { "stars": 2, "why": "Once registered it behaves like any other MCP server." }
+      },
+      "provides": ["mcp"],
+      "accepts": [],
+      "runsOn": ["nodejs", "python"],
+      "status": "planned",
+      "color": "teal"
+    },
+    {
+      "id": "edge",
+      "name": "Microsoft Edge",
+      "category": "browser",
+      "summary": "The company browser, usable as an automation target.",
+      "why": "Automations run in a browser your teams already use, so there is nothing new to roll out.",
+      "what": "Microsoft's Chromium-based browser. It runs on Windows, macOS and Linux, and Playwright can launch it with the msedge option.",
+      "how": [
+        "Make sure Edge is installed.",
+        "Select it by setting the browser option to msedge in Playwright MCP."
+      ],
+      "difficulty": {
+        "installation": { "stars": 1, "why": "Usually already installed." },
+        "usage": { "stars": 1, "why": "Nothing to learn. It is driven through Playwright MCP." }
+      },
+      "provides": ["browser"],
+      "accepts": [],
+      "runsOn": ["desktop-os"],
+      "status": "available",
+      "color": "coral"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "browser-checks-without-code",
+      "title": "Browser checks without test code",
+      "bricks": ["github-copilot", "playwright-mcp", "edge"],
+      "why": "People can check internal web apps by describing the check in plain language, instead of waiting for someone to write test scripts.",
+      "what": "Copilot receives the request and calls Playwright MCP. Playwright drives Edge through the steps and reports back.",
+      "how": [
+        "Install Node.js 18 or newer.",
+        "Register the Playwright MCP server in the Copilot MCP settings.",
+        "Set the browser option to msedge.",
+        "Ask Copilot in agent mode to run your first check."
+      ],
+      "example": "Ask Copilot to log in to the portal and confirm the monthly report page loads.",
+      "difficulty": {
+        "installation": { "stars": 3, "why": "The initial manual connection of all tools: Node.js, the MCP entry, the browser option and Copilot agent mode." },
+        "usage": { "stars": 2, "why": "Describe the check in plain language and review the result." }
+      },
+      "tags": ["testing", "browser"]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+# Real company data never goes into this repo.
+# Public demo data lives in profiles/demo/. Everything real goes here:
+profiles/private/*
+!profiles/private/README.md
+*.private.json
+*.private.md
+
+# Local tooling and noise
+node_modules/
+.venv/
+__pycache__/
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
