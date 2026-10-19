@@ -1,0 +1,315 @@
+{
+  "schemaVersion": "1.2",
+  "meta": {
+    "title": "PostgreSQL as database and vector store",
+    "description": "PostgreSQL for structured data and, with the pgvector extension, for embeddings. n8n is shown as an example user. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
+    "language": "en",
+    "updated": "2026-10-19"
+  },
+  "studs": [
+    {
+      "id": "workflow",
+      "label": "Workflow",
+      "description": "Triggers or runs automations"
+    },
+    {
+      "id": "sql",
+      "label": "SQL",
+      "description": "Reads and writes data in a SQL database"
+    },
+    {
+      "id": "vector-search",
+      "label": "Vector search",
+      "description": "Stores embeddings and finds similar items"
+    },
+    {
+      "id": "pg-extension",
+      "label": "Postgres extension",
+      "description": "Extension slot of a PostgreSQL server"
+    }
+  ],
+  "platforms": [
+    {
+      "id": "desktop-os",
+      "label": "Desktop OS",
+      "kind": "os",
+      "summary": "The common desktop operating systems.",
+      "variants": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ]
+    },
+    {
+      "id": "docker",
+      "label": "Docker",
+      "kind": "container",
+      "summary": "Container runtime for ready-made images such as n8n and PostgreSQL.",
+      "why": "A container packs a tool with everything it needs, so the machine only needs Docker and no tool-by-tool installation.",
+      "what": "Docker Desktop for Mac, Windows and Linux includes Docker Engine and Docker Compose. On Linux, Engine and Compose can also be installed on their own, which suits machines without a graphical desktop.",
+      "how": [
+        "Install Docker Desktop, or Docker Engine and Compose on a Linux server.",
+        "Create volumes for the data that must survive restarts.",
+        "Start the image with its ports and volumes, or use a Compose file."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 2,
+          "why": "A standard installer. Linux servers use separate Engine and Compose packages."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "Images, volumes, ports and updates need some container knowledge."
+        }
+      },
+      "runsOn": [
+        "desktop-os"
+      ],
+      "links": [
+        {
+          "label": "Docker docs",
+          "url": "https://docs.docker.com/"
+        }
+      ]
+    },
+    {
+      "id": "nodejs",
+      "label": "Node.js",
+      "kind": "runtime",
+      "summary": "JavaScript runtime for MCP servers, scripts and npm-installed tools.",
+      "why": "Many AI tools start through Node.js (npx or npm), so the runtime has to be there first.",
+      "what": "A JavaScript runtime that runs outside the browser. Every tool states its own version need. n8n installed with npm needs 20.19 up to 24.x.",
+      "how": [
+        "Install a Node.js version that your tools support.",
+        "Check it in a terminal with node --version."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 2,
+          "why": "An installer is enough, but versions must match what the tools expect."
+        },
+        "usage": {
+          "stars": 1,
+          "why": "Runs in the background. Nobody has to use it directly."
+        }
+      },
+      "runsOn": [
+        "desktop-os"
+      ],
+      "links": [
+        {
+          "label": "Node.js",
+          "url": "https://nodejs.org/"
+        }
+      ]
+    }
+  ],
+  "bricks": [
+    {
+      "id": "postgresql",
+      "name": "PostgreSQL",
+      "category": "data",
+      "summary": "Open-source relational database server that also takes extensions such as pgvector.",
+      "why": "Holds structured business data and, with the pgvector extension, the embeddings for semantic search in one reliable system that many tools already support.",
+      "what": "A database server with SQL and a catalogue of extensions. PostgreSQL 18 is the current major version (18.6 on 2026-10-19). Each major version is supported for five years. Installers and packages exist for Linux, macOS, Windows and BSD, and there is an official Docker image.",
+      "how": [
+        "Pick a supported major version. 18 is current, so check the versioning page.",
+        "Install it from the packages or installer for your OS, or start the official postgres Docker image with POSTGRES_PASSWORD set and a data volume (for 18 the image volume is /var/lib/postgresql).",
+        "Create a database and a user for your application.",
+        "Connect your tool with host, port, database and credentials."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 3,
+          "why": "A server to install, secure and update. In Docker, volumes and the password variable must be right."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "SQL plus users, backups and upgrades need database know-how."
+        }
+      },
+      "provides": [
+        "sql",
+        "pg-extension"
+      ],
+      "accepts": [],
+      "runsOn": [
+        "docker",
+        "desktop-os"
+      ],
+      "status": "available",
+      "color": "blue",
+      "links": [
+        {
+          "label": "Versioning policy",
+          "url": "https://www.postgresql.org/support/versioning/"
+        },
+        {
+          "label": "Download",
+          "url": "https://www.postgresql.org/download/"
+        },
+        {
+          "label": "Official Docker image",
+          "url": "https://hub.docker.com/_/postgres"
+        }
+      ]
+    },
+    {
+      "id": "pgvector",
+      "name": "pgvector",
+      "category": "data",
+      "summary": "PostgreSQL extension that stores embeddings and finds similar ones.",
+      "why": "Adds semantic search to a database you already run. Documents and their vectors stay together, and no separate vector database is needed.",
+      "what": "An open-source extension (version 0.8.7) for PostgreSQL 13 and later. It adds the types vector, halfvec, bit and sparsevec, distance operators (L2, inner product, cosine, L1, Hamming, Jaccard) and HNSW and IVFFlat indexes for approximate search. Exact search works without an index. A vector column can hold up to 16,000 dimensions, an HNSW index on type vector up to 2,000.",
+      "how": [
+        "Install pgvector for your PostgreSQL version: packages, a Docker image such as pgvector/pgvector, or build from source.",
+        "Run CREATE EXTENSION vector; once in each database.",
+        "Create a table with a vector(N) column, where N is the size your embedding model produces.",
+        "Insert embeddings and search with ORDER BY embedding <-> '[...]' LIMIT 5. Add an HNSW or IVFFlat index for approximate search."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 2,
+          "why": "Packages and Docker images exist, then one CREATE EXTENSION command per database."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "Embeddings must come from a model, and distance and index settings need some understanding."
+        }
+      },
+      "provides": [
+        "vector-search"
+      ],
+      "accepts": [
+        "pg-extension"
+      ],
+      "status": "available",
+      "color": "blue",
+      "links": [
+        {
+          "label": "pgvector on GitHub",
+          "url": "https://github.com/pgvector/pgvector"
+        }
+      ]
+    },
+    {
+      "id": "n8n",
+      "name": "n8n",
+      "category": "automation",
+      "summary": "Low-code workflow editor with AI agent nodes, hosted as a container or Node.js app.",
+      "why": "Teams build automations and AI agents by connecting nodes in a visual editor instead of writing code. One tool joins model endpoints, databases and MCP servers.",
+      "what": "A workflow platform you host yourself. Its AI Agent node connects a chat model with tools. It can call external MCP servers (MCP Client Tool) and offer its own tools as an MCP server (MCP Server Trigger). It stores workflows, credentials and runs in SQLite by default, or in PostgreSQL. Docker Compose is the documented route for production. npm installs are for local tests and deprecated from n8n 3.0.",
+      "how": [
+        "Install Docker (Docker Desktop, or Docker Engine and Compose on a Linux server).",
+        "Create a data volume and start the n8nio/n8n image on port 5678 with the volume mounted at /home/node/.n8n. For production use the Docker Compose setup.",
+        "Open http://localhost:5678 and finish the first-time setup.",
+        "Add credentials for your model endpoint and databases, then build a workflow with the AI Agent node."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 3,
+          "why": "Docker, a persistent volume and ports are set up by hand. Production adds Compose, a PostgreSQL database and regular updates (new minor versions most weeks)."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "The editor is visual, but agents, credentials, expressions and tool wiring take practice."
+        }
+      },
+      "provides": [
+        "workflow"
+      ],
+      "accepts": [
+        "sql",
+        "vector-search"
+      ],
+      "runsOn": [
+        "docker",
+        "nodejs"
+      ],
+      "status": "available",
+      "color": "amber",
+      "links": [
+        {
+          "label": "Host n8n",
+          "url": "https://docs.n8n.io/deploy/host-n8n"
+        },
+        {
+          "label": "Docker install",
+          "url": "https://docs.n8n.io/hosting/installation/docker/"
+        },
+        {
+          "label": "MCP Server Trigger",
+          "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcpTrigger/"
+        },
+        {
+          "label": "n8n databases",
+          "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
+        }
+      ]
+    }
+  ],
+  "recipes": [
+    {
+      "id": "postgres-semantic-search",
+      "title": "Semantic search inside PostgreSQL",
+      "bricks": [
+        "postgresql",
+        "pgvector"
+      ],
+      "why": "Business data and its embeddings stay in one database, so there is one system to back up, secure and run.",
+      "what": "pgvector adds vector columns, distance operators and approximate indexes to PostgreSQL. An application stores embeddings next to the rows and searches by similarity with SQL.",
+      "how": [
+        "Run PostgreSQL 13 or later with pgvector installed.",
+        "Run CREATE EXTENSION vector; in the database.",
+        "Add a vector(N) column that fits your embedding model.",
+        "Insert embeddings and query with ORDER BY embedding <-> '[...]' LIMIT 5."
+      ],
+      "example": "A support-ticket table gets an embedding column, and similar past tickets are found with one SQL query.",
+      "difficulty": {
+        "installation": {
+          "stars": 3,
+          "why": "A server, an extension and an embedding pipeline must be set up."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "Needs SQL, an embeddings model and index tuning."
+        }
+      },
+      "tags": [
+        "embeddings",
+        "database"
+      ]
+    },
+    {
+      "id": "n8n-on-postgresql",
+      "title": "n8n with PostgreSQL storage",
+      "bricks": [
+        "n8n",
+        "postgresql"
+      ],
+      "why": "n8n keeps workflows, credentials and runs in SQLite by default. PostgreSQL is the documented alternative for setups that need more than a single file.",
+      "what": "n8n is switched to PostgreSQL with DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables. The n8n data folder still has to be kept, for the encryption key and logs.",
+      "how": [
+        "Start a PostgreSQL server or container with a database and user for n8n.",
+        "Set DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables for the n8n container.",
+        "Keep the /home/node/.n8n volume.",
+        "Start n8n and check that it connects."
+      ],
+      "example": "A Docker Compose file starts PostgreSQL and n8n side by side.",
+      "difficulty": {
+        "installation": {
+          "stars": 3,
+          "why": "Two services, their variables and two persistent volumes must fit together."
+        },
+        "usage": {
+          "stars": 2,
+          "why": "After the setup nothing changes for the people who build workflows."
+        }
+      },
+      "tags": [
+        "hosting",
+        "database"
+      ]
+    }
+  ]
+}

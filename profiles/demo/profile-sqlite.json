@@ -1,0 +1,282 @@
+{
+  "schemaVersion": "1.2",
+  "meta": {
+    "title": "SQLite as database and vector store",
+    "description": "SQLite as a serverless database in one file and, with the sqlite-vec extension, as a local vector store. n8n is shown as an example user of its SQL side. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
+    "language": "en",
+    "updated": "2026-10-19"
+  },
+  "studs": [
+    {
+      "id": "workflow",
+      "label": "Workflow",
+      "description": "Triggers or runs automations"
+    },
+    {
+      "id": "sql",
+      "label": "SQL",
+      "description": "Reads and writes data in a SQL database"
+    },
+    {
+      "id": "vector-search",
+      "label": "Vector search",
+      "description": "Stores embeddings and finds similar items"
+    },
+    {
+      "id": "sqlite-extension",
+      "label": "SQLite extension",
+      "description": "Loadable extension for a SQLite connection"
+    }
+  ],
+  "platforms": [
+    {
+      "id": "desktop-os",
+      "label": "Desktop OS",
+      "kind": "os",
+      "summary": "The common desktop operating systems.",
+      "variants": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ]
+    },
+    {
+      "id": "docker",
+      "label": "Docker",
+      "kind": "container",
+      "summary": "Container runtime for ready-made images such as n8n and PostgreSQL.",
+      "why": "A container packs a tool with everything it needs, so the machine only needs Docker and no tool-by-tool installation.",
+      "what": "Docker Desktop for Mac, Windows and Linux includes Docker Engine and Docker Compose. On Linux, Engine and Compose can also be installed on their own, which suits machines without a graphical desktop.",
+      "how": [
+        "Install Docker Desktop, or Docker Engine and Compose on a Linux server.",
+        "Create volumes for the data that must survive restarts.",
+        "Start the image with its ports and volumes, or use a Compose file."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 2,
+          "why": "A standard installer. Linux servers use separate Engine and Compose packages."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "Images, volumes, ports and updates need some container knowledge."
+        }
+      },
+      "runsOn": [
+        "desktop-os"
+      ],
+      "links": [
+        {
+          "label": "Docker docs",
+          "url": "https://docs.docker.com/"
+        }
+      ]
+    },
+    {
+      "id": "nodejs",
+      "label": "Node.js",
+      "kind": "runtime",
+      "summary": "JavaScript runtime for MCP servers, scripts and npm-installed tools.",
+      "why": "Many AI tools start through Node.js (npx or npm), so the runtime has to be there first.",
+      "what": "A JavaScript runtime that runs outside the browser. Every tool states its own version need. n8n installed with npm needs 20.19 up to 24.x.",
+      "how": [
+        "Install a Node.js version that your tools support.",
+        "Check it in a terminal with node --version."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 2,
+          "why": "An installer is enough, but versions must match what the tools expect."
+        },
+        "usage": {
+          "stars": 1,
+          "why": "Runs in the background. Nobody has to use it directly."
+        }
+      },
+      "runsOn": [
+        "desktop-os"
+      ],
+      "links": [
+        {
+          "label": "Node.js",
+          "url": "https://nodejs.org/"
+        }
+      ]
+    }
+  ],
+  "bricks": [
+    {
+      "id": "sqlite",
+      "name": "SQLite",
+      "category": "data",
+      "summary": "Serverless SQL database in a single file, built into many tools.",
+      "why": "Needs no server and no setup, so apps, scripts and agents can keep structured data in one portable file.",
+      "what": "A C library that runs inside the application and reads and writes an ordinary file, with ACID transactions. Public domain. Latest release 3.54.1 (2026-10-16). Full-text search (FTS5) is part of the source but not enabled in every build. Vector search needs an extension such as sqlite-vec. n8n uses SQLite by default for its own data.",
+      "how": [
+        "Check whether your tool or language already bundles SQLite. Python does.",
+        "Otherwise download the library or the command-line shell from sqlite.org.",
+        "Open or create a database file. It is created on first use.",
+        "Add extensions when needed. Loading is off by default and the application must switch it on."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 1,
+          "why": "Usually already present, and there is no server to run."
+        },
+        "usage": {
+          "stars": 2,
+          "why": "Plain SQL. Extensions need an extra step."
+        }
+      },
+      "provides": [
+        "sql",
+        "sqlite-extension"
+      ],
+      "accepts": [],
+      "runsOn": [
+        "desktop-os"
+      ],
+      "status": "available",
+      "color": "green",
+      "links": [
+        {
+          "label": "About SQLite",
+          "url": "https://www.sqlite.org/about.html"
+        },
+        {
+          "label": "Loadable extensions",
+          "url": "https://www.sqlite.org/loadext.html"
+        },
+        {
+          "label": "FTS5",
+          "url": "https://www.sqlite.org/fts5.html"
+        }
+      ]
+    },
+    {
+      "id": "sqlite-vec",
+      "name": "sqlite-vec",
+      "category": "data",
+      "summary": "SQLite extension that stores vectors and finds nearest neighbours.",
+      "why": "Gives local, file-based apps semantic search without a separate vector database.",
+      "what": "A small extension in pure C without dependencies, the successor of sqlite-vss, under Apache-2.0 and MIT. Float, int8 and binary vectors live in vec0 virtual tables. It is pre-v1, so breaking changes are possible. Bindings exist for Python, Node.js, Ruby, Go and Rust. It runs on Linux, macOS, Windows, in browsers via WASM and on Raspberry Pi.",
+      "how": [
+        "Install the binding for your language or download a release build.",
+        "Enable extension loading in your application. SQLite has it off by default, the sqlite3 shell has it on.",
+        "Load the extension. In the shell: .load ./vec0",
+        "Create a vec0 virtual table, insert vectors, and query with MATCH and ORDER BY distance."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 3,
+          "why": "The build must match the platform and be loaded by hand. Pre-v1, so versions should be pinned."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "Embeddings must come from a model, and the interface may still change."
+        }
+      },
+      "provides": [
+        "vector-search"
+      ],
+      "accepts": [
+        "sqlite-extension"
+      ],
+      "status": "available",
+      "color": "green",
+      "links": [
+        {
+          "label": "sqlite-vec on GitHub",
+          "url": "https://github.com/asg017/sqlite-vec"
+        }
+      ]
+    },
+    {
+      "id": "n8n",
+      "name": "n8n",
+      "category": "automation",
+      "summary": "Low-code workflow editor with AI agent nodes, hosted as a container or Node.js app.",
+      "why": "Teams build automations and AI agents by connecting nodes in a visual editor instead of writing code. One tool joins model endpoints, databases and MCP servers.",
+      "what": "A workflow platform you host yourself. Its AI Agent node connects a chat model with tools. It can call external MCP servers (MCP Client Tool) and offer its own tools as an MCP server (MCP Server Trigger). It stores workflows, credentials and runs in SQLite by default, or in PostgreSQL. Docker Compose is the documented route for production. npm installs are for local tests and deprecated from n8n 3.0.",
+      "how": [
+        "Install Docker (Docker Desktop, or Docker Engine and Compose on a Linux server).",
+        "Create a data volume and start the n8nio/n8n image on port 5678 with the volume mounted at /home/node/.n8n. For production use the Docker Compose setup.",
+        "Open http://localhost:5678 and finish the first-time setup.",
+        "Add credentials for your model endpoint and databases, then build a workflow with the AI Agent node."
+      ],
+      "difficulty": {
+        "installation": {
+          "stars": 3,
+          "why": "Docker, a persistent volume and ports are set up by hand. Production adds Compose, a PostgreSQL database and regular updates (new minor versions most weeks)."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "The editor is visual, but agents, credentials, expressions and tool wiring take practice."
+        }
+      },
+      "provides": [
+        "workflow"
+      ],
+      "accepts": [
+        "sql"
+      ],
+      "runsOn": [
+        "docker",
+        "nodejs"
+      ],
+      "status": "available",
+      "color": "amber",
+      "links": [
+        {
+          "label": "Host n8n",
+          "url": "https://docs.n8n.io/deploy/host-n8n"
+        },
+        {
+          "label": "Docker install",
+          "url": "https://docs.n8n.io/hosting/installation/docker/"
+        },
+        {
+          "label": "MCP Server Trigger",
+          "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcpTrigger/"
+        },
+        {
+          "label": "n8n databases",
+          "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
+        }
+      ]
+    }
+  ],
+  "recipes": [
+    {
+      "id": "sqlite-local-semantic-search",
+      "title": "Local semantic search in one file",
+      "bricks": [
+        "sqlite",
+        "sqlite-vec"
+      ],
+      "why": "A script or small app can search by meaning with no database server, and the whole index travels as one file.",
+      "what": "sqlite-vec adds vec0 virtual tables to a SQLite connection. Vectors are stored in the database file and searched with a MATCH query ordered by distance.",
+      "how": [
+        "Install the sqlite-vec binding for your language.",
+        "Enable extension loading and load the extension on the connection.",
+        "Create a vec0 virtual table and insert embeddings.",
+        "Query with MATCH and ORDER BY distance."
+      ],
+      "example": "A command-line tool indexes meeting notes and returns the five notes closest to a question.",
+      "difficulty": {
+        "installation": {
+          "stars": 3,
+          "why": "The extension must match the platform and be loaded by hand. It is pre-v1."
+        },
+        "usage": {
+          "stars": 3,
+          "why": "Needs embeddings from a model and tolerance for interface changes."
+        }
+      },
+      "tags": [
+        "embeddings",
+        "local"
+      ]
+    }
+  ]
+}
