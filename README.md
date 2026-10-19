@@ -8,18 +8,26 @@ Managers and developers read the same catalogue. Each tool is a **brick**. Brick
 
 | Part | Folder | Status |
 |---|---|---|
-| Viewer: read-only catalogue in vanilla HTML/CSS/JS, dark and light theme | `viewer/` | working |
+| Viewer: read-only catalogue in plain HTML, CSS and JS files, dark and light theme | `viewer/` | working |
 | Schema: the contract between editor and viewer (version 1.2) | `schema/` | working |
 | Profile template: brief for an agent that collects tools and metadata | `docs/profile-template.md` | working |
 | Editor: extend the catalogue, define connections, export a profile | `editor/` | planned |
 
 ## Quick start
 
-Open `viewer/index.html` in a browser. It shows the demo profile built into the page. When the page is served from a web server, it loads a `catalog.json` placed next to it instead.
+Open `viewer/index.html` in a browser. It needs no build step and shows the demo profile built into the page. When the folder is served from a web server, the viewer loads a `catalog.json` placed next to the page instead.
 
 ```bash
-cd viewer && python3 -m http.server 8080
+npm run serve                 # http://127.0.0.1:4173/
+npm run build                 # one self-contained file: dist/toolkit-bricks.html
 ```
+
+| File in `viewer/` | Purpose |
+|---|---|
+| `index.html` | Page structure and the built-in demo profile |
+| `viewer.css` | Styles, light and dark theme |
+| `viewer.js` | Rendering and interaction |
+| `catalog-core.js` | Validation and graph building, copied from `shared/` |
 
 ## Profiles: demo and private
 
@@ -36,7 +44,8 @@ To create a real profile, give `docs/profile-template.md` to an agent that can r
 npm install
 npm test                      # rule-by-rule tests for viewer, schema and fixtures
 npm run validate -- profiles/demo/catalog.json
-npm run sync                  # after editing shared/catalog-core.js
+npm run test:visual           # real-browser checks and screenshots (Playwright)
+npm run sync                  # after editing shared/catalog-core.js or the demo profile
 ```
 
 ## Design

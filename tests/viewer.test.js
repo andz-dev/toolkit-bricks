@@ -1,12 +1,12 @@
 'use strict';
 const { describe, it, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
-const { loadViewer, readViewerHtml, pathPoints } = require('./helpers/load-viewer.js');
+const { loadViewer, readViewerSources, pathPoints } = require('./helpers/load-viewer.js');
 
 let v;
 afterEach(() => { if (v) { v.close(); v = null; } });
 
-async function open(opts) { v = loadViewer(opts); await v.settle(); return v; }
+async function open(opts) { v = await loadViewer(opts); await v.settle(); return v; }
 async function pick(id) { v.click(`#board .brick[data-id="${id}"]`); await v.settle(); }
 async function layerOn() { v.click('.tog'); await v.settle(); }
 const text = el => el.textContent.replace(/\s+/g, ' ').trim();
@@ -229,9 +229,9 @@ describe('behaviour and look', () => {
   });
 
   it('U-1: both themes define the colour tokens', () => {
-    const html = readViewerHtml();
-    assert.match(html, /@media \(prefers-color-scheme: dark\)\{:root:not\(\[data-theme="light"\]\)/);
-    assert.match(html, /:root\[data-theme="dark"\]\{/);
+    const css = readViewerSources().css;
+    assert.match(css, /@media \(prefers-color-scheme: dark\)\{:root:not\(\[data-theme="light"\]\)/);
+    assert.match(css, /:root\[data-theme="dark"\]\{/);
   });
 
   it('U-2: with reduced motion there are no pulses, dashes or trains', async () => {
@@ -240,29 +240,30 @@ describe('behaviour and look', () => {
     await pick('playwright-mcp');
     await layerOn();
     assert.equal(v.$$('#detail animateMotion').length, 0);
-    assert.match(readViewerHtml(), /prefers-reduced-motion:reduce\)\{\.flow\{animation:none\}/);
+    assert.match(readViewerSources().css, /prefers-reduced-motion:reduce\)\{\.flow\{animation:none\}/);
   });
 
   it('U-3: side gutters use at least 16px and respect safe areas (static check; look at it in a browser too)', () => {
-    const html = readViewerHtml();
-    assert.match(html, /padding-left:max\(16px,env\(safe-area-inset-left/);
-    assert.match(html, /padding-right:max\(16px,env\(safe-area-inset-right/);
+    const { css, html } = readViewerSources();
+    assert.match(css, /padding-left:max\(16px,env\(safe-area-inset-left/);
+    assert.match(css, /padding-right:max\(16px,env\(safe-area-inset-right/);
     assert.match(html, /name="viewport"|claude:viewport-fit-sides/);
   });
 
-  it('U-4: no scripts or styles from outside except web fonts', () => {
-    const html = readViewerHtml();
-    assert.ok(!/<script[^>]+\ssrc=/i.test(html));
-    const links = [...html.matchAll(/<link[^>]+href="([^"]+)"/g)].map(m => m[1]);
-    assert.ok(links.length > 0 && links.every(h => h.startsWith('https://fonts.googleapis.com/')));
-    assert.ok(!/\bimport\s*\(|\bimport\s+.+\sfrom\s/.test(html));
+  it('U-4: no scripts or styles from outside except web fonts, and no modules or imports', () => {
+    const { html, js, core } = readViewerSources();
+    const refs = [...html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)="([^"]+)"/g)].map(m => m[1]);
+    const external = refs.filter(r => /^(https?:)?\/\//.test(r));
+    assert.ok(external.length > 0 && external.every(r => r.startsWith('https://fonts.googleapis.com/')), 'external: ' + external);
+    assert.ok(!/<script[^>]+type="module"/.test(html));
+    assert.ok(!/\bimport\s*\(|^\s*import\s.+\sfrom\s/m.test(js + core));
   });
 
   it('U-5: there is no file-open button, no drop zone and no query parameter loader', async () => {
     await open();
     assert.equal(v.$$('input[type="file"]').length, 0);
     assert.ok(!/open catalog/i.test(text(v.document.body)));
-    assert.ok(!/dragover|dropzone|\?catalog=/i.test(readViewerHtml()));
+    assert.ok(!/dragover|dropzone|\?catalog=/i.test(readViewerSources().all));
   });
 
   it('U-5: when served, it loads catalog.json next to the page', async () => {

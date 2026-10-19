@@ -1,9 +1,9 @@
+/* Shared catalog logic: validation and graph building (design rule D-3).
+   Source of truth for the viewer and the editor. Works in the browser
+   (window.CatalogCore) and in Node (module.exports).
+   viewer/catalog-core.js is a copy of this file: edit here, then run `npm run sync`. */
+(function (root) {
 'use strict';
-/* Shared catalog logic: validation and graph building.
-   Source of truth for the viewer and the future editor (design rule D-3).
-   The block between the markers is copied into viewer/index.html by
-   scripts/sync-core.js. Edit it here, then run: npm run sync */
-/* @core:begin */
 var ID=/^[a-z0-9]+(-[a-z0-9]+)*$/;
 var VERSION='1.2';
 var CATS=['ai-assistant','automation','browser','connector','data','other'];
@@ -162,5 +162,8 @@ function buildGraph(c){
     loose:c.bricks.filter(function(b){return!linked.has(b.id);}).map(function(b){return b.id;})
   };
 }
-/* @core:end */
-if(typeof module!=='undefined')module.exports={validate:validate,buildGraph:buildGraph,VERSION:VERSION};
+
+var api = { validate: validate, buildGraph: buildGraph, VERSION: VERSION };
+if (typeof module !== 'undefined' && module.exports) module.exports = api;
+else root.CatalogCore = api;
+})(typeof self !== 'undefined' ? self : this);

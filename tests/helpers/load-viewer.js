@@ -3,10 +3,29 @@
 // (direction of cables and trains) without a real browser.
 const fs = require('fs');
 const path = require('path');
-const { JSDOM } = require('jsdom');
+const { JSDOM, ResourceLoader } = require('jsdom');
 
-const viewerPath = path.join(__dirname, '..', '..', 'viewer', 'index.html');
+const viewerDir = path.join(__dirname, '..', '..', 'viewer');
+const viewerPath = path.join(viewerDir, 'index.html');
 const readViewerHtml = () => fs.readFileSync(viewerPath, 'utf8');
+// The viewer is split into files; checks on source text read them separately or together.
+const readViewerSources = () => {
+  const html = readViewerHtml();
+  const css = fs.readFileSync(path.join(viewerDir, 'viewer.css'), 'utf8');
+  const js = fs.readFileSync(path.join(viewerDir, 'viewer.js'), 'utf8');
+  const core = fs.readFileSync(path.join(viewerDir, 'catalog-core.js'), 'utf8');
+  return { html, css, js, core, all: [html, css, js, core].join('\n') };
+};
+
+// Serves files next to the page from disk; web fonts are skipped (no network in tests).
+class LocalLoader extends ResourceLoader {
+  constructor(dir) { super(); this.dir = dir; }
+  fetch(url) {
+    if (/^https?:\/\/fonts\.(googleapis|gstatic)\.com/.test(url)) return null;
+    const name = new URL(url).pathname.split('/').pop();
+    return fs.promises.readFile(path.join(this.dir, name));
+  }
+}
 
 function indexIn(el, selector) {
   return [...el.parentElement.children].indexOf(el);
@@ -36,12 +55,15 @@ function installLayout(w) {
   w.SVGElement.prototype.getPointAtLength = () => ({ x: 1, y: 1 });
 }
 
-function loadViewer(opts) {
+async function loadViewer(opts) {
   const o = opts || {};
-  const html = o.mutateHtml ? o.mutateHtml(readViewerHtml()) : readViewerHtml();
+  const source = o.htmlPath || viewerPath;
+  const raw = fs.readFileSync(source, 'utf8');
+  const html = o.mutateHtml ? o.mutateHtml(raw) : raw;
   const errors = [];
   const dom = new JSDOM(html, {
     runScripts: 'dangerously',
+    resources: new LocalLoader(path.dirname(source)),
     url: o.url || 'file:///viewer/index.html',
     pretendToBeVisual: true,
     beforeParse(w) {
@@ -58,6 +80,7 @@ function loadViewer(opts) {
   });
   const w = dom.window;
   const d = w.document;
+  await new Promise(res => (d.readyState === 'complete' ? res() : w.addEventListener('load', res)));
   const settle = () => new Promise(r => setTimeout(r, 80));
   return {
     window: w, document: d, errors, settle,
@@ -80,4 +103,4 @@ function pathPoints(d) {
   return pts;
 }
 
-module.exports = { loadViewer, readViewerHtml, pathPoints, viewerPath };
+module.exports = { loadViewer, readViewerHtml, readViewerSources, pathPoints, viewerPath, viewerDir };

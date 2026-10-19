@@ -20,6 +20,12 @@ jobs:
       - run: npm test
       - name: Validate demo profile
         run: npm run validate -- profiles/demo/catalog.json
+      - name: Build single file
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: toolkit-bricks-single-file
+          path: dist/toolkit-bricks.html
 
   browser:
     runs-on: ubuntu-latest

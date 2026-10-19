@@ -79,14 +79,14 @@ describe('schema and versions', () => {
     if (g.status === 0) assert.deepEqual(g.stdout.split('\n').filter(f => f && f !== 'profiles/private/README.md'), [], 'private files must never be tracked');
   });
 
-  it('D-3: the viewer has no private copy of the validator', () => {
-    const html = fs.readFileSync(path.join(root, 'viewer', 'index.html'), 'utf8')
-      .replace(/\/\* @core:begin \*\/[\s\S]*?\/\* @core:end \*\//, '');
-    assert.ok(!/function validate\(/.test(html) && !/function buildGraph\(/.test(html));
+  it('D-3: the viewer has no private copy of the validator, and its shared core is an exact copy', () => {
+    const js = fs.readFileSync(path.join(root, 'viewer', 'viewer.js'), 'utf8');
+    assert.ok(!/function validate\(/.test(js) && !/function buildGraph\(/.test(js));
+    assert.equal(fs.readFileSync(path.join(root, 'viewer', 'catalog-core.js'), 'utf8'), fs.readFileSync(path.join(root, 'shared', 'catalog-core.js'), 'utf8'));
   });
 
-  it('D-3: the viewer copy of the shared core is in sync', () => {
-    const r = spawnSync(process.execPath, ['scripts/sync-core.js', '--check'], { cwd: root, encoding: 'utf8' });
+  it('D-3: generated parts of the viewer are in sync (npm run sync)', () => {
+    const r = spawnSync(process.execPath, ['scripts/sync.js', '--check'], { cwd: root, encoding: 'utf8' });
     assert.equal(r.status, 0, r.stderr);
   });
 
