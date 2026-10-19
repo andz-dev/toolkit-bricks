@@ -1,6 +1,11 @@
 #!/bin/sh
 # Runs the same tests as CI. Do not skip this hook with --no-verify.
-if ! npm test --silent; then
+# Output is shown only when the tests fail, so a passing commit stays quiet.
+out=$(npm test 2>&1)
+status=$?
+if [ $status -ne 0 ]; then
+  printf '%s\n' "$out" | grep -E '^\s*not ok|^# (tests|pass|fail)|error:|Error' | head -40 >&2
   echo "pre-commit: npm test failed. Fix the tests; do not skip the hook." >&2
   exit 1
 fi
+echo "pre-commit: npm test passed"
