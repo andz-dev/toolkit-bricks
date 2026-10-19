@@ -761,7 +761,7 @@ function recipeSection(list,title){
       var body=el('div',{class:'rbody'});
       add(body,explain(r));
       if(r.example)body.append(el('section',{class:'sec'},el('h3',{text:'Example'}),el('p',{class:'txt',text:r.example})));
-      body.append(difficultySection(r.difficulty));
+      add(body,[difficultySection(r.difficulty)]);
       card.append(body);
     }else card.append(el('p',{class:'rsum',text:r.what}));
     card.append(el('div',{class:'mini'},r.bricks.map(function(id){var b=state.graph.byId.get(id);return el('span',{text:b?b.name:id});})));
@@ -899,11 +899,11 @@ function renderDetail(){
       el('p',{class:'summary',text:p.summary}));
     if(state.layer)box.append(layerSection(p.id));
     add(box,explain(p));
-    box.append(difficultySection(p.difficulty));
+    add(box,[difficultySection(p.difficulty)]);
     if(p.variants&&p.variants.length)box.append(el('section',{class:'sec'},el('h3',{text:'Variants'}),el('div',{class:'tags'},p.variants.map(function(v){return el('span',{class:'pill',text:v});}))));
     if((p.runsOn||[]).length)box.append(whereSection(p));
     if(here.length)box.append(el('section',{class:'sec'},el('h3',{text:'Running here'}),here.map(function(n){return nodeRow(n.id,'up',n.name?n.category.replace('-',' '):KIND_LABEL[n.kind]);})));
-    box.append(linksSection(p.links));
+    add(box,[linksSection(p.links)]);
     return;
   }
   var b=g.byId.get(state.sel);
@@ -917,7 +917,7 @@ function renderDetail(){
     el('p',{class:'summary',text:b.summary}));
   if(state.layer)box.append(layerSection(b.id));
   add(box,explain(b));
-  box.append(difficultySection(b.difficulty));
+  add(box,[difficultySection(b.difficulty)]);
   box.append(el('section',{class:'sec'},el('h3',{text:'Offers'}),
     b.provides.length?el('div',{class:'tags'},b.provides.map(studChip)):el('p',{class:'muted',text:'Nothing other bricks can plug into.'})));
   box.append(el('section',{class:'sec'},el('h3',{text:'Needs'}),
@@ -926,7 +926,7 @@ function renderDetail(){
   if(uses.length)box.append(el('section',{class:'sec'},el('h3',{text:'Uses'}),uses.map(function(e){return connRow(e.to,e.stud,'down');})));
   if(usedBy.length)box.append(el('section',{class:'sec'},el('h3',{text:'Used by'}),usedBy.map(function(e){return connRow(e.from,e.stud,'up');})));
   box.append(recipeSection(cat.recipes.filter(function(r){return r.bricks.indexOf(b.id)>=0;}),'Setups with this brick'));
-  box.append(linksSection(b.links));
+  add(box,[linksSection(b.links)]);
 }
 function select(id,opts){
   opts=opts||{};

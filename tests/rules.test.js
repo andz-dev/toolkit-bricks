@@ -12,10 +12,12 @@ const ruleIds = [...design.matchAll(/^\| ([A-Z]-\d+) \|/gm)].map(m => m[1]);
 const manual = JSON.parse(fs.readFileSync(path.join(dir, 'manual-rules.json'), 'utf8'));
 
 const testedIds = new Set();
-for (const f of fs.readdirSync(dir).filter(n => n.endsWith('.test.js') && n !== 'rules.test.js')) {
-  const src = fs.readFileSync(path.join(dir, f), 'utf8');
-  // rule IDs that start a test title, for example it('V-2: ...')
-  for (const m of src.matchAll(/\bit\(\s*[`'"]([A-Z]-\d+):/g)) testedIds.add(m[1]);
+const testFiles = fs.readdirSync(dir).filter(n => n.endsWith('.test.js') && n !== 'rules.test.js').map(n => path.join(dir, n))
+  .concat(fs.readdirSync(path.join(dir, 'visual')).filter(n => n.endsWith('.spec.js')).map(n => path.join(dir, 'visual', n)));
+for (const f of testFiles) {
+  const src = fs.readFileSync(f, 'utf8');
+  // rule IDs that start a test title, for example it('V-2: ...') or test('V-2: ...')
+  for (const m of src.matchAll(/\b(?:it|test)\(\s*[`'"]([A-Z]-\d+):/g)) testedIds.add(m[1]);
 }
 // fixture rule tags are used as test titles in schema.test.js
 const fixtures = require('./fixtures.js');

@@ -56,6 +56,7 @@ These rules describe what the project must do. Each has an ID. Commits name the 
 | U-5 | The viewer has no file-open button. It loads `catalog.json` next to the page when served, otherwise it uses the demo profile built into the page. |
 | U-6 | The viewer reads schema version 1.2 only. It shows a clear error for anything else and never renders a half-valid catalogue. |
 | U-7 | Controls are keyboard reachable and have accessible names. Escape closes the details. |
+| U-8 | The viewer never shows placeholder text such as "null" or "undefined", whichever optional fields a brick, platform or setup leaves out. |
 
 ## Data and schema
 
@@ -73,10 +74,11 @@ These rules describe what the project must do. Each has an ID. Commits name the 
 |---|---|---|
 | Tests per rule | `npm test` | Every rule above is named at the start of a test (`V-2: ...`) or listed with a reason in `tests/manual-rules.json`. A rule without either fails `tests/rules.test.js`. |
 | Profile validation | `npm run validate -- <file.json>` | Schema plus the shared cross-reference rules (D-3). Use it on every profile an agent delivers. |
+| Browser tests | `npm run test:visual` | Real Chromium: geometry, motion direction (pulses down, trains up), overflow, contrast and screenshots in light and dark at desktop and phone width. Screenshots go to `test-results/screens/`. |
 | Core sync | `npm run sync` | Copies `shared/catalog-core.js` into the viewer. A test fails when they differ. |
 | CI | `.github/workflows/test.yml` | Runs `npm test` on every push and pull request. |
 
-Rules that are only checked by eye: C-1, C-2, T-4 (see `tests/manual-rules.json`). Layout at real screen sizes is not covered by jsdom; check it in a browser until visual snapshots are added.
+Rules that are only checked by eye: C-1, C-2, T-4 (see `tests/manual-rules.json`). jsdom (`npm test`) has no real layout. Geometry, motion and contrast are checked in Chromium by `npm run test:visual`.
 
 ## Version history
 

@@ -311,3 +311,33 @@ describe('behaviour and look', () => {
     assert.equal(text(v.$('#detail h2')), 'Pick a brick');
   });
 });
+
+describe('placeholder text', () => {
+  it('U-8: no screen shows "null" or "undefined", for any brick, platform or setup', async () => {
+    await open();
+    const ids = v.$$('#board .brick').map(b => b.dataset.id);
+    const check = (what) => {
+      const t = text(v.$('#detail-wrap'));
+      assert.ok(!/\b(null|undefined|NaN)\b/.test(t), `placeholder text on ${what}: ${t.match(/.{0,30}\b(null|undefined|NaN)\b.{0,10}/)}`);
+    };
+    check('the start screen');
+    for (const id of ids) {
+      await pick(id);
+      check('brick ' + id);
+      if (!v.$('.tog[aria-pressed="true"]')) await layerOn();
+      check('layer of ' + id);
+      const nodes = v.$$('#detail .lnode').map(n => n.dataset.id).filter(n => n !== id);
+      for (const n of nodes) {
+        if (!v.$(`#detail .lnode[data-id="${n}"]`)) await pick(id);
+        v.click(`#detail .lnode[data-id="${n}"]`);
+        await v.settle();
+        check('platform ' + n);
+      }
+      v.click('.close');
+      await v.settle();
+    }
+    v.click('.recipe-head');
+    await v.settle();
+    check('an opened setup');
+  });
+});

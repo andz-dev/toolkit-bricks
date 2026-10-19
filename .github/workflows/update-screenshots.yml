@@ -1,0 +1,30 @@
+name: update screenshots
+
+# Run by hand (Actions > update screenshots > Run workflow) after an intended visual change.
+# It renders the baselines in the official Playwright image and commits them.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - run: npm ci
+      - run: npx playwright test -g "screenshot" --update-snapshots
+        env:
+          VISUAL_COMPARE: "1"
+      - name: Commit baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/visual/__screenshots__
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Update screenshot baselines"
+          git push
