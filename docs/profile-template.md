@@ -711,7 +711,7 @@ A small, valid profile. Texts and ratings are placeholders. Replace everything w
 {
   "schemaVersion": "1.3",
   "meta": {
-    "title": "Our AI and automation toolkit",
+    "title": "GitHub Copilot with MCP and Edge",
     "description": "Sample catalog. Texts and ratings are placeholders to be replaced with your own.",
     "language": "en",
     "updated": "2026-10-19"

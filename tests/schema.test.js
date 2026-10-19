@@ -160,10 +160,14 @@ describe('schema and versions', () => {
     assert.equal(r.status, 0, r.stderr);
   });
 
-  it('U-5: the demo profile built into the viewer equals profiles/demo/catalog.json', () => {
+  it('N-9: the demo package built into the viewer equals profiles/demo (collection and every profile)', () => {
     const html = fs.readFileSync(path.join(root, 'viewer', 'index.html'), 'utf8');
-    const m = html.match(/id="catalog-data">([\s\S]*?)<\/script>/);
-    assert.deepEqual(JSON.parse(m[1]), demo);
+    const m = html.match(/id="package-data">([\s\S]*?)<\/script>/);
+    const dir = path.join(root, 'profiles', 'demo');
+    const collection = JSON.parse(fs.readFileSync(path.join(dir, 'collection.json'), 'utf8'));
+    const profiles = {};
+    for (const t of collection.topics) profiles[t.file] = JSON.parse(fs.readFileSync(path.join(dir, t.file), 'utf8'));
+    assert.deepEqual(JSON.parse(m[1]), { collection, profiles });
   });
 
   it('D-3: the command line validator passes the demo and fails a broken file', () => {

@@ -11,16 +11,19 @@ const VIEWPORTS = [
 ];
 const SCHEMES = ['light', 'dark'];
 
-async function openViewer(page, { reducedMotion = false } = {}) {
+const PAGE1 = '/#/browser-automation/browser-checks-without-code';
+const PAGE2 = '/#/browser-automation/copilot-with-own-mcp-server';
+async function openViewer(page, { reducedMotion = false, url = PAGE1 } = {}) {
   const problems = [];
   page.on('pageerror', e => problems.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) problems.push('console: ' + m.text()); });
   // Web fonts are not needed for the checks and make results depend on the network.
   await page.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await page.emulateMedia({ reducedMotion: reducedMotion ? 'reduce' : 'no-preference' });
-  await page.goto('/');
+  await page.goto(url);
+  if (url === '/') { await page.waitForSelector('#dash .box'); return problems; }
   await page.waitForSelector('#board .brick');
-  await page.waitForSelector('#wires .edge');
+  await page.waitForSelector('#wires .edge', { state: 'attached' });
   return problems;
 }
 
@@ -72,7 +75,7 @@ for (const vp of VIEWPORTS) {
         expect(await y('github-copilot')).toBeLessThan(await y('playwright-mcp'));
         expect(await y('playwright-mcp')).toBeLessThan(await y('edge'));
         const ends = await page.$$eval('#wires .edge path.cable', ps => ps.map(p => { const l = p.getTotalLength(); const a = p.getPointAtLength(0), b = p.getPointAtLength(l); return [a.y, b.y]; }));
-        expect(ends.length).toBe(3);
+        expect(ends.length).toBe(2);
         for (const [a, b] of ends) expect(b).toBeGreaterThan(a);
         expect(problems).toEqual([]);
       });
@@ -80,7 +83,7 @@ for (const vp of VIEWPORTS) {
       test(`V-3: pulses really move downward along the cables (${vp.name} ${scheme})`, async ({ page }) => {
         await openViewer(page);
         const travel = await verticalTravel(page, '#wires .edge circle');
-        expect(travel.length).toBe(3);
+        expect(travel.length).toBe(2);
         for (const t of travel) { expect(t.moved).toBeGreaterThan(5); expect(t.dy).toBeGreaterThan(0); }
       });
 
@@ -114,7 +117,7 @@ for (const vp of VIEWPORTS) {
       });
 
       test(`U-3: 16px gutters and no horizontal scroll in every state (${vp.name} ${scheme})`, async ({ page }) => {
-        await openViewer(page);
+        await openViewer(page, { url: PAGE2 });
         const noScroll = async state => {
           const w = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
           expect(w[0], `horizontal scroll in state: ${state}`).toBeLessThanOrEqual(w[1]);
@@ -135,8 +138,8 @@ for (const vp of VIEWPORTS) {
           expect(b.x + b.width).toBeLessThanOrEqual(layer.x + layer.width + 0.5);
         }
         await page.keyboard.press('Escape');
-        await page.locator('.recipe-head').first().click();
-        await noScroll('setup opened');
+        await page.locator('#pagenav .next').click();
+        await noScroll('next page');
       });
 
       test(`U-1: text is readable in this theme, contrast of at least 4.5 (${vp.name} ${scheme})`, async ({ page }) => {
@@ -154,6 +157,42 @@ for (const vp of VIEWPORTS) {
     });
   }
 }
+
+test.describe('dashboard and navigation', () => {
+  for (const vp of VIEWPORTS) {
+    test(`N-1: the dashboard has 16px gutters, no horizontal scroll and boxes that do not overlap (${vp.name})`, async ({ page }) => {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      const problems = await openViewer(page, { url: '/' });
+      const w = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
+      expect(w[0]).toBeLessThanOrEqual(w[1]);
+      const boxes = await page.locator('#dash .box').evaluateAll(els => els.map(e => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y + window.scrollY, width: r.width, height: r.height }; }));
+      expect(boxes.length).toBe(12);
+      for (const b of boxes) { expect(b.x).toBeGreaterThanOrEqual(15.5); expect(b.x + b.width).toBeLessThanOrEqual(vp.width - 15.5); }
+      for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) expect(overlaps(boxes[i], boxes[j])).toBe(false);
+      expect(problems).toEqual([]);
+    });
+
+    test(`N-3: the bar is fixed at the bottom, Back on the left, Next on the right, and hides no content (${vp.name})`, async ({ page }) => {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await openViewer(page);
+      const bar = await box(page.locator('#pagenav'));
+      expect(bar.y + bar.height).toBeGreaterThan(vp.height - 1);
+      const prev = await box(page.locator('#pagenav .prev')), home = await box(page.locator('#pagenav .home')), next = await box(page.locator('#pagenav .next'));
+      expect(prev.x + prev.width).toBeLessThanOrEqual(home.x + 1);
+      expect(home.x + home.width).toBeLessThanOrEqual(next.x + 1);
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      const last = await page.evaluate(() => { const r = document.querySelector('#legend').getBoundingClientRect(); return r.bottom; });
+      expect(last).toBeLessThanOrEqual(bar.y + 1);
+      await page.locator('#pagenav .next').click();
+      await expect(page.locator('h1')).toHaveText('Copilot with your own MCP server');
+      expect(page.url()).toContain('#/browser-automation/copilot-with-own-mcp-server');
+      await page.goBack();
+      await expect(page.locator('h1')).toHaveText('Browser checks without test code');
+      await page.keyboard.press('ArrowRight');
+      await expect(page.locator('h1')).toHaveText('Copilot with your own MCP server');
+    });
+  }
+});
 
 test.describe('motion and structure', () => {
   test.use({ viewport: { width: 1280, height: 900 } });
@@ -192,7 +231,7 @@ test.describe('motion and structure', () => {
     await pick(page, 'edge');
     await expect(page.locator('#detail h2')).toHaveText('Microsoft Edge');
     await page.keyboard.press('Escape');
-    await expect(page.locator('#detail h2')).toHaveText('Pick a brick');
+    await expect(page.locator('#detail .empty h2')).toHaveText('Pick a brick');
   });
 
   test('U-4: the page works with no network at all', async ({ page, context }) => {
@@ -202,7 +241,7 @@ test.describe('motion and structure', () => {
     // reload while offline may fail for http; the built-in demo must still be there on the loaded page
     await context.setOffline(false);
     await page.goto('/');
-    await expect(page.locator('#board .brick')).toHaveCount(4);
+    await expect(page.locator('#dash .box')).toHaveCount(12);
   });
 });
 
@@ -213,7 +252,8 @@ const SHOTS = [
   { name: 'brick-selected', steps: async page => { await pick(page, 'playwright-mcp'); } },
   { name: 'layer', steps: async page => { await pick(page, 'github-copilot'); await layerOn(page); } },
   { name: 'platform', steps: async page => { await pick(page, 'edge'); await layerOn(page); await page.locator('#detail .lnode[data-id="desktop-os"]').click(); } },
-  { name: 'setup', steps: async page => { await page.locator('.recipe-head').first().click(); } }
+  { name: 'dashboard', url: '/', steps: async () => {} },
+  { name: 'second-page', url: PAGE2, steps: async page => { await pick(page, 'custom-mcp-server'); } }
 ];
 for (const vp of VIEWPORTS) {
   for (const scheme of SCHEMES) {
@@ -221,7 +261,7 @@ for (const vp of VIEWPORTS) {
       test.use({ viewport: { width: vp.width, height: vp.height }, colorScheme: scheme });
       for (const s of SHOTS) {
         test(`U-3: screenshot ${s.name} (${vp.name} ${scheme})`, async ({ page }) => {
-          await openViewer(page, { reducedMotion: true });
+          await openViewer(page, { reducedMotion: true, url: s.url });
           await s.steps(page);
           await page.waitForTimeout(200);
           const file = `${s.name}-${vp.name}-${scheme}.png`;

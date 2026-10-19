@@ -15,7 +15,7 @@ Managers and developers read the same catalogue. Each tool is a **brick**. Brick
 
 ## Quick start
 
-Open `viewer/index.html` in a browser. It needs no build step and shows the demo profile built into the page. When the folder is served from a web server, the viewer loads a `catalog.json` placed next to the page instead.
+Open `viewer/index.html` in a browser. It needs no build step and opens on a dashboard with the demo package built into the page: one box per use case, grouped by topic. Every use case is its own page (`#/<topic>/<use-case>`) with Back, Home and Next buttons that show the neighbouring use cases. When the folder is served from a web server, the viewer loads a `collection.json` placed next to the page, and every profile it lists, instead.
 
 ```bash
 npm run serve                 # http://127.0.0.1:4173/

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.3",
   "meta": {
-    "title": "Our AI and automation toolkit",
+    "title": "GitHub Copilot with MCP and Edge",
     "description": "Sample catalog. Texts and ratings are placeholders to be replaced with your own.",
     "language": "en",
     "updated": "2026-10-19"
@@ -386,6 +386,36 @@
         "browser"
       ],
       "icon": "globe"
+    },
+    {
+      "id": "copilot-with-own-mcp-server",
+      "title": "Copilot with your own MCP server",
+      "bricks": [
+        "github-copilot",
+        "custom-mcp-server"
+      ],
+      "why": "Internal data and actions become available to Copilot without copying them into prompts.",
+      "what": "Copilot calls a small MCP server the team wrote. The server reads from or acts on an internal system and returns the result.",
+      "how": [
+        "Write the MCP server with the official SDK for your language.",
+        "Register it in the Copilot MCP settings.",
+        "Ask Copilot in agent mode a question that needs the server."
+      ],
+      "example": "Ask Copilot for the open tickets of your team; the server answers from the ticket system.",
+      "difficulty": {
+        "installation": {
+          "stars": 4,
+          "why": "Someone has to write, host and secure the server before anyone can use it."
+        },
+        "usage": {
+          "stars": 1,
+          "why": "Ask in plain language; Copilot decides when to call the server."
+        }
+      },
+      "tags": [
+        "mcp"
+      ],
+      "icon": "plug"
     }
   ]
 }

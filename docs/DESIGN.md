@@ -17,12 +17,12 @@ These rules describe what the project must do. Each has an ID. Commits name the 
 
 | ID | Rule |
 |---|---|
-| V-1 | The main board shows bricks and their connections only. Infrastructure is not drawn on it. |
+| V-1 | The board of a use case page shows its bricks and their connections only. Infrastructure is not drawn on it. |
 | V-2 | Cables run from the brick that uses a capability to the brick that offers it, top to bottom. |
 | V-3 | An animation (pulse and dashes) moves along each cable in the direction of communication, from user to provider. |
 | V-4 | Connections are drawn with plug and bolt icons. Each stud has its own colour and a label chip. |
-| V-5 | A click on a brick (icon box and label) opens its details on the right. On narrow screens the details open below. |
-| V-6 | Selecting a brick dims everything unrelated. Selecting a setup highlights its bricks. |
+| V-5 | A click on a brick (icon box and label) opens its details on the right. On narrow screens the details open below. With nothing selected, the details show the use case itself: why, what, how, example, difficulty and research. |
+| V-6 | Selecting a brick dims everything unrelated. |
 
 ## Viewer: infrastructure
 
@@ -54,7 +54,7 @@ These rules describe what the project must do. Each has an ID. Commits name the 
 | U-2 | Reduced motion is respected: no pulses and no dash animation. |
 | U-3 | Works at phone width. 16px side gutters. No horizontal page scroll. |
 | U-4 | Plain HTML, CSS and JS files. No framework, no bundler, no runtime dependencies. Web fonts are the only external resource. |
-| U-5 | The viewer has no file-open button. It loads `catalog.json` next to the page when served, otherwise it uses the demo profile built into the page. |
+| U-5 | The viewer has no file-open button, no drop zone and no query-parameter loader. It works from `file://` with the built-in package. |
 | U-6 | The viewer reads schema version 1.3 only. It shows a clear error for anything else and never renders a half-valid catalogue. |
 | U-7 | Controls are keyboard reachable and have accessible names. Escape closes the details. |
 | U-8 | The viewer never shows placeholder text such as "null" or "undefined", whichever optional fields a brick, platform or setup leaves out. |
@@ -92,9 +92,9 @@ The tokens are the custom properties at the top of `viewer/viewer.css`: the ligh
 | D-4 | A schema change that breaks old files raises the version. The viewer states which version it reads. |
 | D-5 | Warnings (unused studs or platforms, unconnected setups, bricks without infrastructure) never block loading. |
 
-## Planned: dashboard and use-case pages
+## Dashboard and use-case pages
 
-Not built yet. These rules move into the sections above, with tests, when the pages are built. The coverage test ignores this section. When they move, U-5, V-1 and V-5 change as noted.
+The viewer is a small set of pages. The dashboard is the entry point; every use case (recipe) is a page.
 
 | ID | Rule |
 |---|---|
@@ -103,10 +103,10 @@ Not built yet. These rules move into the sections above, with tests, when the pa
 | N-3 | Every use case page has a fixed bar with Back, Home and Next. Back and Next show the title of the previous and next use case, like a carousel, and wrap around at the ends. |
 | N-4 | Home opens the dashboard. The left and right arrow keys go back and next unless a text field has focus. |
 | N-5 | Navigation uses icons together with text (house, chevrons, grid), accessible names, and a position such as "3 of 10". |
-| N-6 | A use case page shows only the bricks of that use case on its board. Other use cases that use a brick are listed in its details as links. (Changes V-1 and V-5.) |
+| N-6 | A use case page shows only the bricks of that use case on its board. Other use cases of the same topic that use a brick are listed in its details as links ("Also used in"). |
 | N-7 | Page order follows `collection.json`: topics in order, then the use cases of each profile in the order of its `recipes`. A use case that appears in two profiles appears twice. |
-| N-8 | A dashboard box shows an icon, the title, the topic, installation and usage stars, and the bricks involved. |
-| N-9 | The viewer loads `collection.json` next to the page and then every profile it lists. When served without one, or opened from `file://`, it uses the demo package built into the page. (Replaces U-5.) |
+| N-8 | A dashboard box shows an icon, the title, a short description, the topic, installation and usage stars, and the bricks involved. |
+| N-9 | The viewer loads `collection.json` next to the page and then every profile it lists. A profile that fails validation is left out with a message; when none is valid, or when there is no collection or the page is opened from `file://`, it uses the demo package built into the page. |
 
 ## Guardrails
 
@@ -115,7 +115,7 @@ Not built yet. These rules move into the sections above, with tests, when the pa
 | Tests per rule | `npm test` | Every rule above is named at the start of a test (`V-2: ...`) or listed with a reason in `tests/manual-rules.json`. A rule without either fails `tests/rules.test.js`. |
 | Profile validation | `npm run validate -- <file.json>` | Schema plus the shared cross-reference rules (D-3). Use it on every profile an agent delivers. |
 | Browser tests | `npm run test:visual` | Real Chromium: geometry, motion direction (pulses down, trains up), overflow, contrast and screenshots in light and dark at desktop and phone width. Screenshots go to `test-results/screens/`. |
-| Sync | `npm run sync` | Copies `shared/catalog-core.js` to `viewer/catalog-core.js` and embeds `profiles/demo/catalog.json` into `viewer/index.html`. A test fails when they differ. |
+| Sync | `npm run sync` | Copies `shared/catalog-core.js` to `viewer/catalog-core.js` and embeds the demo package (`profiles/demo/collection.json` and every profile it lists) into `viewer/index.html`. A test fails when they differ. |
 | Single file | `npm run build` | Writes `dist/toolkit-bricks.html` (ignored by git). |
 | Git hooks | `.githooks/`, switched on by `npm install` | `pre-commit` runs `npm test`. `commit-msg` requires a known rule ID or the line `Rules: none` (`scripts/check-commit-msg.js`). They work for every agent and person. Skipping them with `--no-verify` is not allowed. |
 | Visual system | `npm test` (`tests/visual-system.test.js`) | L-1 to L-4: no colour value or font name outside the tokens, dark set complete, stud colours by index. |

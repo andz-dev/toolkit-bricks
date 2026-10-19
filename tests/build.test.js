@@ -21,9 +21,9 @@ describe('viewer folder', () => {
   });
 
   it('U-9: works from file:// with the split files', async () => {
-    v = await loadViewer({ url: 'file:///viewer/index.html' });
+    v = await loadViewer({ url: 'file:///viewer/index.html#/browser-automation/browser-checks-without-code' });
     await v.settle();
-    assert.equal(v.$$('#board .brick').length, 4);
+    assert.equal(v.$$('#board .brick').length, 3);
     assert.deepEqual(v.errors, []);
   });
 });
@@ -40,7 +40,13 @@ describe('single-file build', () => {
       assert.ok(html.includes('window.CatalogCore') && html.includes('function renderBoard'));
       v = await loadViewer({ htmlPath: out });
       await v.settle();
-      assert.equal(v.$$('#board .brick').length, 4);
+      assert.equal(v.$$('#dash .box').length, 12);
+      v.click('#dash .topic:last-child .box:last-child');
+      await v.settle();
+      assert.equal(v.$$('#board .brick').length, 2);
+      v.window.location.hash = '#/browser-automation/browser-checks-without-code';
+      await v.settle();
+      assert.equal(v.$$('#board .brick').length, 3);
       v.click('#board .brick[data-id="playwright-mcp"]');
       await v.settle();
       assert.equal(v.$('#detail h2').textContent, 'Playwright MCP');
