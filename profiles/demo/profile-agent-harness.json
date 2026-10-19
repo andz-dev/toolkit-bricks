@@ -1,10 +1,79 @@
 {
-  "schemaVersion": "1.2",
+  "schemaVersion": "1.3",
   "meta": {
     "title": "Agent harness and its components",
     "description": "The agent harness and its main building blocks: instructions, skills, MCP servers, subagents, workflows and hooks. Follows the Claude Code and VS Code documentation. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
     "language": "en",
     "updated": "2026-10-19"
+  },
+  "research": {
+    "verifiedOn": "2026-10-19",
+    "facts": [
+      {
+        "text": "Subagents live in .claude/agents/ in Claude Code.",
+        "source": {
+          "label": "Claude Code subagents",
+          "url": "https://code.claude.com/docs/en/sub-agents"
+        }
+      },
+      {
+        "text": "Dynamic workflows run up to 16 agents at once and up to 1,000 per run.",
+        "source": {
+          "label": "Claude Code workflows",
+          "url": "https://code.claude.com/docs/en/workflows"
+        }
+      },
+      {
+        "text": "CLAUDE.md is the instruction file in Claude Code. AGENTS.md can be read in its place.",
+        "source": {
+          "label": "Claude Code overview",
+          "url": "https://code.claude.com/docs/en/overview"
+        }
+      },
+      {
+        "text": "MCP connects an agent to tools and data through one open standard.",
+        "source": {
+          "label": "MCP introduction",
+          "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
+        }
+      }
+    ],
+    "openPoints": [
+      {
+        "text": "Subagent, dynamic workflow and hook details come from Claude Code documentation only.",
+        "owner": "Check the documentation of the harness you use"
+      },
+      {
+        "text": "GitHub Copilot was verified for skills only.",
+        "owner": "Check the Copilot documentation if this profile should cover it"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Claude Code overview",
+        "url": "https://code.claude.com/docs/en/overview"
+      },
+      {
+        "label": "Claude Code skills",
+        "url": "https://code.claude.com/docs/en/skills"
+      },
+      {
+        "label": "Claude Code subagents",
+        "url": "https://code.claude.com/docs/en/sub-agents"
+      },
+      {
+        "label": "Claude Code workflows",
+        "url": "https://code.claude.com/docs/en/workflows"
+      },
+      {
+        "label": "VS Code agent skills",
+        "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
+      },
+      {
+        "label": "MCP introduction",
+        "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
+      }
+    ]
   },
   "studs": [
     {
@@ -203,7 +272,7 @@
     {
       "id": "instruction-file",
       "name": "Instruction file",
-      "category": "other",
+      "category": "agent-component",
       "summary": "A Markdown file that the agent reads at the start of every session.",
       "why": "Keeps team rules, architecture decisions and checklists in the repository, so every session starts with the same context.",
       "what": "CLAUDE.md in Claude Code. If a repository already has an AGENTS.md for other coding agents, Claude Code can read that instead. Typical content: coding standards, preferred libraries and review checklists.",
@@ -233,12 +302,15 @@
           "label": "Claude Code overview",
           "url": "https://code.claude.com/docs/en/overview"
         }
+      ],
+      "runsOn": [
+        "agent-harness"
       ]
     },
     {
       "id": "agent-skill",
       "name": "Agent skill",
-      "category": "other",
+      "category": "skill",
       "summary": "A folder with a SKILL.md file that teaches an agent a repeatable task.",
       "why": "Packs team know-how into portable, version-controlled folders, so any compatible agent follows the same procedure without being told again.",
       "what": "An open format: a folder with a required SKILL.md (name, description, instructions) and optional scripts/, references/ and assets/ folders. The agent reads only name and description at startup, loads the full instructions when a task matches, and opens further files on demand. A skill is not an app. It needs an agent harness to run.",
@@ -276,12 +348,15 @@
           "label": "Overview",
           "url": "https://agentskills.io/home"
         }
+      ],
+      "runsOn": [
+        "agent-harness"
       ]
     },
     {
       "id": "skill-script",
       "name": "Skill script",
-      "category": "other",
+      "category": "skill",
       "summary": "Executable code in the scripts folder of a skill.",
       "why": "Turns written instructions into repeatable, checkable actions, such as converting a file or calling an API, instead of letting the agent improvise each time.",
       "what": "A script that the agent runs. Python, Bash and JavaScript are common, and the supported languages depend on the harness. The script is executed and does not have to be loaded into the agent's context. It should be self-contained or document its dependencies and give helpful error messages.",
@@ -316,6 +391,9 @@
           "label": "Skill specification",
           "url": "https://agentskills.io/specification"
         }
+      ],
+      "requires": [
+        "agent-skill"
       ]
     },
     {
@@ -361,7 +439,7 @@
     {
       "id": "subagent",
       "name": "Subagent",
-      "category": "other",
+      "category": "agent-component",
       "summary": "A helper agent with its own context window, tools and permissions.",
       "why": "Keeps long searches and logs out of the main conversation and splits a task among specialised workers.",
       "what": "In Claude Code, a Markdown file with a YAML header (name and description are required, the body is the system prompt) in .claude/agents/ or ~/.claude/agents/. Only its final summary returns to the main conversation. Subagents cannot start further subagents beyond a depth limit (three layers by default).",
@@ -392,12 +470,15 @@
           "label": "Subagents",
           "url": "https://code.claude.com/docs/en/sub-agents"
         }
+      ],
+      "runsOn": [
+        "agent-harness"
       ]
     },
     {
       "id": "harness-workflow",
       "name": "Dynamic workflow",
-      "category": "automation",
+      "category": "agent-component",
       "summary": "A rerunnable script that orchestrates many subagents.",
       "why": "One request can fan out over hundreds of files or sources. The plan is held in code, so runs are repeatable and the main conversation stays small.",
       "what": "In Claude Code, a JavaScript script that Claude writes and a runtime executes in the background. A run can use dozens to hundreds of agents (up to 16 at once by default, 1,000 per run). A good run can be saved as a command in .claude/workflows/ or shipped in a plugin. One run can use far more tokens than a normal chat.",
@@ -430,12 +511,15 @@
           "label": "Dynamic workflows",
           "url": "https://code.claude.com/docs/en/workflows"
         }
+      ],
+      "runsOn": [
+        "agent-harness"
       ]
     },
     {
       "id": "harness-hook",
       "name": "Hook",
-      "category": "other",
+      "category": "agent-component",
       "summary": "A shell command that the harness runs before or after an action.",
       "why": "Enforces rules automatically, such as formatting after every edit or linting before a commit, whether or not the model remembers the rule.",
       "what": "In Claude Code, hooks run shell commands around actions such as file edits. A PreToolUse hook can also allow or block a tool call. They are configured in the settings, not in the prompt.",
@@ -502,7 +586,8 @@
       "tags": [
         "skills",
         "harness"
-      ]
+      ],
+      "icon": "bolt"
     },
     {
       "id": "harness-fan-out-review",
@@ -534,7 +619,8 @@
       "tags": [
         "workflows",
         "subagents"
-      ]
+      ],
+      "icon": "layers"
     },
     {
       "id": "harness-with-company-tools",
@@ -566,7 +652,8 @@
       "tags": [
         "harness",
         "mcp"
-      ]
+      ],
+      "icon": "plug"
     }
   ]
 }

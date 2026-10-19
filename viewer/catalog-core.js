@@ -5,8 +5,9 @@
 (function (root) {
 'use strict';
 var ID=/^[a-z0-9]+(-[a-z0-9]+)*$/;
-var VERSION='1.2';
-var CATS=['ai-assistant','automation','browser','connector','data','other'];
+var VERSION='1.3';
+var COLLECTION_VERSION='1.0';
+var CATS=['ai-assistant','automation','browser','connector','data','database','agent-component','skill','other'];
 var PKINDS=['host-app','runtime','os','container','cloud','other'];
 var STATUS=['available','planned','restricted'];
 var TONES=['purple','teal','coral','pink','gray','blue','green','amber','red'];
@@ -25,6 +26,33 @@ function checkDifficulty(d,who,er){
     else if(!str(r.why))er.push(who+': difficulty.'+k+' needs a reason.');
   });
 }
+function isDate(v){
+  if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;
+  var d=new Date(v+'T00:00:00Z');
+  return !isNaN(d.getTime())&&d.toISOString().slice(0,10)===v;
+}
+function checkLink(l,where,er,wa){
+  if(!isObj(l)||!str(l.label)||!str(l.url)){er.push(where+' needs a label and a url.');return;}
+  if(!/^https?:\/\//i.test(l.url))wa.push(where+': the link "'+l.url+'" is not http or https and will not be shown.');
+}
+function checkResearch(r,who,er,wa){
+  if(!isObj(r)){er.push(who+': research must be an object.');return;}
+  if(!isDate(r.verifiedOn))er.push(who+': research.verifiedOn must be a date like 2026-10-19.');
+  var any=false;
+  ['facts','openPoints','sources'].forEach(function(k){
+    if(r[k]===undefined)return;
+    if(!Array.isArray(r[k])){er.push(who+': research.'+k+' must be a list.');return;}
+    if(r[k].length)any=true;
+    r[k].forEach(function(item,i){
+      var at=who+': research.'+k+'['+i+']';
+      if(k==='sources'){checkLink(item,at,er,wa);return;}
+      if(!isObj(item)||!str(item.text)){er.push(at+' needs text.');return;}
+      if(k==='facts'&&item.source!==undefined)checkLink(item.source,at+'.source',er,wa);
+      if(k==='openPoints'&&item.owner!==undefined&&!str(item.owner))er.push(at+'.owner must be text.');
+    });
+  });
+  if(!any)er.push(who+': research needs at least one fact, open point or source.');
+}
 function validate(c){
   var er=[],wa=[];
   if(!isObj(c))return{er:['The file is not a JSON object.'],wa:wa};
@@ -34,6 +62,7 @@ function validate(c){
   if(er.length)return{er:er,wa:wa};
   var studIds=new Set(),platIds=new Set(),brickIds=new Set(),recipeIds=new Set();
   function dup(set,id,what){if(set.has(id))er.push('Duplicate '+what+' id "'+id+'".');set.add(id);}
+  if(c.research!==undefined)checkResearch(c.research,'profile',er,wa);
   c.studs.forEach(function(s,i){
     if(!isObj(s)||!ID.test(s.id||'')||!str(s.label)){er.push('studs['+i+'] needs a valid id and a label.');return;}
     dup(studIds,s.id,'stud');
@@ -49,11 +78,7 @@ function validate(c){
     if(p.how!==undefined)checkHow(p.how,p.id,er);
     if(p.difficulty!==undefined)checkDifficulty(p.difficulty,p.id,er);
     if(p.variants!==undefined&&(!Array.isArray(p.variants)||p.variants.some(function(v){return!str(v);})))er.push(p.id+': variants must be a list of text.');
-  });
-  c.platforms.forEach(function(p){
-    if(!isObj(p)||!p.id||p.runsOn===undefined)return;
-    if(!Array.isArray(p.runsOn)){er.push(p.id+': "runsOn" must be a list.');return;}
-    p.runsOn.forEach(function(q){if(!platIds.has(q))er.push(p.id+': runsOn uses unknown platform "'+q+'".');});
+    if(p.research!==undefined)checkResearch(p.research,p.id,er,wa);
   });
   if(!c.bricks.length)er.push('The catalog has no bricks.');
   c.bricks.forEach(function(b,i){
@@ -72,12 +97,19 @@ function validate(c){
       if(!Array.isArray(b[k])){er.push(b.id+': "'+k+'" must be a list.');return;}
       b[k].forEach(function(s){if(!studIds.has(s))er.push(b.id+': '+k+' uses unknown stud "'+s+'".');});
     });
-    if(b.runsOn!==undefined){
-      if(!Array.isArray(b.runsOn)||!b.runsOn.length)er.push(b.id+': "runsOn" must be a list with at least one platform.');
-      else b.runsOn.forEach(function(q){if(!platIds.has(q))er.push(b.id+': runsOn uses unknown platform "'+q+'".');});
-    }
+    if(b.research!==undefined)checkResearch(b.research,b.id,er,wa);
   });
   platIds.forEach(function(id){if(brickIds.has(id))er.push('The id "'+id+'" is used by both a brick and a platform.');});
+  /* runsOn (alternatives) and requires (all needed) may name platforms or bricks */
+  function checkRefs(n,isBrick){
+    ['runsOn','requires'].forEach(function(k){
+      if(n[k]===undefined)return;
+      if(!Array.isArray(n[k])||(isBrick&&!n[k].length)){er.push(n.id+': "'+k+'" must be a list'+(isBrick?' with at least one entry':'')+'.');return;}
+      n[k].forEach(function(q){if(!platIds.has(q)&&!brickIds.has(q))er.push(n.id+': '+k+' uses unknown platform or brick "'+q+'".');});
+    });
+  }
+  c.platforms.forEach(function(p){if(isObj(p)&&p.id)checkRefs(p,false);});
+  c.bricks.forEach(function(b){if(isObj(b)&&b.id)checkRefs(b,true);});
   c.recipes.forEach(function(r,i){
     if(!isObj(r)||!ID.test(r.id||'')){er.push('recipes['+i+'] needs a valid id.');return;}
     dup(recipeIds,r.id,'recipe');
@@ -86,20 +118,23 @@ function validate(c){
     if(!str(r.what))er.push(r.id+': what is missing.');
     checkHow(r.how,r.id,er);
     checkDifficulty(r.difficulty,r.id,er);
+    if(r.icon!==undefined&&!/^[a-z0-9-]+$/.test(r.icon))er.push(r.id+': icon must be a lowercase name.');
+    if(r.research!==undefined)checkResearch(r.research,r.id,er,wa);
     if(!Array.isArray(r.bricks)||!r.bricks.length)er.push(r.id+': needs at least one brick.');
     else r.bricks.forEach(function(id){if(!brickIds.has(id))er.push(r.id+': refers to unknown brick "'+id+'".');});
   });
   if(er.length)return{er:er,wa:wa};
   var seen2={};
+  var deps=new Map();
+  c.platforms.concat(c.bricks).forEach(function(n){deps.set(n.id,(n.runsOn||[]).concat(n.requires||[]));});
   function visit(id,trail){
     if(seen2[id]===2)return;
-    if(seen2[id]===1){er.push('Platforms run on each other in a loop: '+trail.concat(id).join(' > ')+'.');return;}
+    if(seen2[id]===1){er.push('Platforms and bricks depend on each other in a loop: '+trail.concat(id).join(' > ')+'.');return;}
     seen2[id]=1;
-    var p=c.platforms.find(function(x){return x.id===id;});
-    ((p&&p.runsOn)||[]).forEach(function(q){visit(q,trail.concat(id));});
+    (deps.get(id)||[]).forEach(function(q){visit(q,trail.concat(id));});
     seen2[id]=2;
   }
-  c.platforms.forEach(function(p){visit(p.id,[]);});
+  deps.forEach(function(v,id){visit(id,[]);});
   if(er.length)return{er:er,wa:wa};
   var g=buildGraph(c);
   c.recipes.forEach(function(r){
@@ -119,7 +154,7 @@ function validate(c){
   c.studs.forEach(function(s){if(!used.has(s.id))wa.push('Stud "'+s.id+'" is not used by any brick.');});
   if(c.platforms.length){
     c.platforms.forEach(function(p){if(!g.runs.some(function(e){return e.to===p.id;}))wa.push('Platform "'+p.id+'" is not used by any brick.');});
-    c.bricks.forEach(function(b){if(!(b.runsOn||[]).length)wa.push('Brick "'+b.id+'" has no infrastructure defined.');});
+    c.bricks.forEach(function(b){if(!(b.runsOn||[]).length&&!(b.requires||[]).length)wa.push('Brick "'+b.id+'" has no infrastructure defined.');});
   }
   return{er:er,wa:wa};
 }
@@ -128,6 +163,9 @@ function validate(c){
 function buildGraph(c){
   var byId=new Map(c.bricks.map(function(b){return[b.id,b];}));
   var platById=new Map(c.platforms.map(function(p){return[p.id,p];}));
+  var nodeById=new Map();
+  c.platforms.forEach(function(p){nodeById.set(p.id,p);});
+  c.bricks.forEach(function(b){nodeById.set(b.id,b);});
   var edges=[];
   c.bricks.forEach(function(a){
     a.accepts.forEach(function(s){
@@ -155,15 +193,36 @@ function buildGraph(c){
   });
   var runs=[];
   c.bricks.concat(c.platforms).forEach(function(n){
-    (n.runsOn||[]).forEach(function(q,i){runs.push({from:n.id,to:q,altIndex:i});});
+    (n.runsOn||[]).forEach(function(q,i){runs.push({from:n.id,to:q,altIndex:i,kind:'runsOn'});});
+    (n.requires||[]).forEach(function(q){runs.push({from:n.id,to:q,altIndex:0,kind:'requires'});});
   });
   return{
-    byId:byId,platById:platById,edges:edges,runs:runs,layers:layers.filter(Boolean),
+    byId:byId,platById:platById,nodeById:nodeById,edges:edges,runs:runs,layers:layers.filter(Boolean),
     loose:c.bricks.filter(function(b){return!linked.has(b.id);}).map(function(b){return b.id;})
   };
 }
 
-var api = { validate: validate, buildGraph: buildGraph, VERSION: VERSION };
+/* ---------- collection (manifest of topics) ---------- */
+function validateCollection(m){
+  var er=[],wa=[];
+  if(!isObj(m))return{er:['The collection is not a JSON object.'],wa:wa};
+  if(m.schemaVersion!==COLLECTION_VERSION)er.push('collection schemaVersion is "'+m.schemaVersion+'". This viewer reads "'+COLLECTION_VERSION+'".');
+  if(!str(m.title))er.push('The collection needs a title.');
+  if(!Array.isArray(m.topics)||!m.topics.length){er.push('The collection needs at least one topic.');return{er:er,wa:wa};}
+  var ids=new Set(),files=new Set();
+  m.topics.forEach(function(t,i){
+    var at='topics['+i+']';
+    if(!isObj(t)){er.push(at+' must be an object.');return;}
+    if(!ID.test(t.id||''))er.push(at+' needs a valid id.');
+    else{if(ids.has(t.id))er.push('Duplicate topic id "'+t.id+'".');ids.add(t.id);}
+    if(typeof t.file!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._-]*\.json$/.test(t.file))er.push(at+' needs a file name like profile.json, without a path.');
+    else{if(files.has(t.file))er.push('Duplicate topic file "'+t.file+'".');files.add(t.file);}
+    if(t.icon!==undefined&&!/^[a-z0-9-]+$/.test(t.icon))er.push(at+': icon must be a lowercase name.');
+  });
+  return{er:er,wa:wa};
+}
+
+var api = { validate: validate, buildGraph: buildGraph, validateCollection: validateCollection, VERSION: VERSION, COLLECTION_VERSION: COLLECTION_VERSION };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 else root.CatalogCore = api;
 })(typeof self !== 'undefined' ? self : this);

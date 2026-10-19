@@ -5,8 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const core = require('../shared/catalog-core.js');
-const { makeSchemaValidator, schema, checkProfile } = require('../scripts/validate-profile.js');
-const { demo, invalid, warnings } = require('./fixtures.js');
+const { makeSchemaValidator, makeCollectionValidator, schema, checkProfile, checkCollection } = require('../scripts/validate-profile.js');
+const { demo, invalid, warnings, collection, invalidCollections } = require('./fixtures.js');
 
 const root = path.join(__dirname, '..');
 const validateSchema = makeSchemaValidator();
@@ -31,6 +31,75 @@ describe('demo profile', () => {
   it('I-4: runsOn entries are alternatives and the graph has one edge per alternative', () => {
     const runs = core.buildGraph(demo).runs.filter(e => e.from === 'custom-mcp-server');
     assert.deepEqual(runs.map(e => e.to + ':' + e.altIndex), ['nodejs:0', 'python:1']);
+  });
+});
+
+describe('package (design rule D-6)', () => {
+  const dir = path.join(root, 'profiles', 'demo');
+  const profiles = collection.topics.map(t => ({ topic: t, data: JSON.parse(fs.readFileSync(path.join(dir, t.file), 'utf8')) }));
+
+  it('D-6: the demo collection validates and lists files that exist', () => {
+    const r = checkCollection(collection, makeCollectionValidator());
+    assert.deepEqual([r.schemaErrors, r.errors], [[], []]);
+    for (const t of collection.topics) assert.ok(fs.existsSync(path.join(dir, t.file)), t.file);
+  });
+
+  it('D-6: every profile in the collection validates without errors', () => {
+    for (const { topic, data } of profiles) {
+      const r = checkProfile(data, validateSchema);
+      assert.deepEqual([topic.file, r.schemaErrors, r.errors], [topic.file, [], []]);
+    }
+  });
+
+  it('D-6: no profile file in the demo folder is missing from the collection', () => {
+    const listed = new Set(collection.topics.map(t => t.file));
+    const files = fs.readdirSync(dir).filter(f => f.endsWith('.json') && f !== 'collection.json');
+    assert.deepEqual(files.filter(f => !listed.has(f)), []);
+  });
+
+  it('N-7 groundwork: the package has more than one use case to page through', () => {
+    const total = profiles.reduce((n, p) => n + p.data.recipes.length, 0);
+    assert.ok(total >= 5);
+  });
+
+  for (const f of invalidCollections) {
+    it(`D-6: rejects a collection with ${f.name}`, () => {
+      const v = makeCollectionValidator();
+      if (f.rejectedBy.includes('schema')) assert.equal(v(f.collection), false);
+      const r = core.validateCollection(f.collection);
+      if (f.rejectedBy.includes('core')) assert.ok(r.er.some(m => m.includes(f.contains)), `expected "${f.contains}", got ${r.er.join(' | ')}`);
+    });
+  }
+});
+
+describe('relations and research in the demo package', () => {
+  const load = f => JSON.parse(fs.readFileSync(path.join(root, 'profiles', 'demo', f), 'utf8'));
+
+  it('I-4: a brick can run inside another brick (pgvector inside PostgreSQL)', () => {
+    const g = core.buildGraph(load('profile-postgresql.json'));
+    assert.ok(g.runs.some(e => e.from === 'pgvector' && e.to === 'postgresql' && e.kind === 'runsOn'));
+    assert.ok(g.byId.has('postgresql') && !g.platById.has('postgresql'));
+  });
+
+  it('I-8: a mandatory requirement is its own kind of edge (skill script needs its skill)', () => {
+    const g = core.buildGraph(load('profile-agent-skills.json'));
+    assert.ok(g.runs.some(e => e.from === 'skill-script' && e.to === 'agent-skill' && e.kind === 'requires'));
+  });
+
+  it('R-1: every profile in the package carries research with a verified date', () => {
+    for (const t of collection.topics) {
+      const c = load(t.file);
+      assert.match(c.research.verifiedOn, /^\d{4}-\d{2}-\d{2}$/, t.file);
+      assert.ok((c.research.sources || []).length > 0, t.file + ' lists sources');
+    }
+  });
+
+  it('R-4: every research link in the demo package is http or https', () => {
+    const urls = [];
+    const walk = n => { if (n && typeof n === 'object') { if (typeof n.url === 'string') urls.push(n.url); Object.values(n).forEach(walk); } };
+    collection.topics.forEach(t => walk(load(t.file)));
+    assert.ok(urls.length > 20);
+    assert.deepEqual(urls.filter(u => !/^https?:\/\//.test(u)), []);
   });
 });
 
@@ -66,7 +135,8 @@ describe('schema and versions', () => {
 
   it('D-4: schema version, validator version and version history agree', () => {
     const design = fs.readFileSync(path.join(root, 'docs', 'DESIGN.md'), 'utf8');
-    const rows = [...design.matchAll(/^\| (\d+\.\d+) \|/gm)].map(m => m[1]);
+    const schemaTable = design.split('| Schema | Change |')[1].split('| Collection | Change |')[0];
+    const rows = [...schemaTable.matchAll(/^\| (\d+\.\d+) \|/gm)].map(m => m[1]);
     assert.equal(schema.properties.schemaVersion.const, core.VERSION);
     assert.equal(rows[rows.length - 1], core.VERSION, 'the last row of the version history must be the current version');
   });

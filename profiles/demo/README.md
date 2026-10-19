@@ -1,17 +1,17 @@
-# Demo profile
+# Demo package
 
-Public sample data. Texts and most ratings are placeholders. Only the installation rating of the browser-checks setup (3 of 5) was set deliberately. Do not put real company information here.
+Public sample data, schema 1.3. Do not put real company information here (design rule D-1).
 
-## Topic profiles (schema 1.2, checked against vendor documentation on 2026-10-19)
-
-One self-contained profile per topic. Ratings are proposals and status values are illustrative.
+`collection.json` lists the topics in the order the viewer shows them. Each topic is one self-contained profile. Texts and ratings are proposals and status values are illustrative. Facts in the `research` blocks were checked against vendor documentation on 2026-10-19.
 
 | File | Topic |
 |---|---|
+| `collection.json` | The package: order, ids and icons of the topics |
 | `profile-n8n.json` | n8n on Docker or Node.js, with model endpoints, MCP servers, PostgreSQL and pgvector |
 | `profile-agent-skills.json` | Agent skills, their scripts, and the agent harness they run inside |
 | `profile-agent-harness.json` | The agent harness and its components: instructions, skills, MCP, subagents, workflows, hooks |
 | `profile-postgresql.json` | PostgreSQL as database and, with pgvector, as vector store |
 | `profile-sqlite.json` | SQLite as database and, with sqlite-vec, as local vector store |
+| `catalog.json` | Browser automation with GitHub Copilot, Playwright MCP and Edge. Only the installation rating of its use case (3 of 5) was set deliberately. |
 
-Validate with `npm run validate -- profiles/demo/profile-*.json`.
+Validate the whole package with `npm run validate -- profiles/demo/collection.json`.

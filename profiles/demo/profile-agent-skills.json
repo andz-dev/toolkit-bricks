@@ -1,10 +1,75 @@
 {
-  "schemaVersion": "1.2",
+  "schemaVersion": "1.3",
   "meta": {
     "title": "Agent skills",
     "description": "Agent skills are no classic app: a folder with a SKILL.md, and often scripts. They need an agent harness to be invoked and an OS and runtime for their scripts. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
     "language": "en",
     "updated": "2026-10-19"
+  },
+  "research": {
+    "verifiedOn": "2026-10-19",
+    "facts": [
+      {
+        "text": "A skill is a folder with a SKILL.md. It needs a name (up to 64 characters, lowercase letters, digits and hyphens, same as the folder) and a description (up to 1,024 characters).",
+        "source": {
+          "label": "Agent Skills specification",
+          "url": "https://agentskills.io/specification"
+        }
+      },
+      {
+        "text": "A skill can add scripts/, references/ and assets/ folders.",
+        "source": {
+          "label": "Agent Skills specification",
+          "url": "https://agentskills.io/specification"
+        }
+      },
+      {
+        "text": "Skills load in three steps: name and description first, then the full instructions, then files on demand.",
+        "source": {
+          "label": "Agent Skills overview",
+          "url": "https://agentskills.io/home"
+        }
+      },
+      {
+        "text": "Many products support skills, but the agent decides whether to use a skill it found.",
+        "source": {
+          "label": "Agent Skills overview",
+          "url": "https://agentskills.io/home"
+        }
+      },
+      {
+        "text": "Claude Code reads skills from .claude/skills/ or ~/.claude/skills/.",
+        "source": {
+          "label": "Claude Code skills",
+          "url": "https://code.claude.com/docs/en/skills"
+        }
+      },
+      {
+        "text": "VS Code reads skills from .github/skills/, .claude/skills/ and .agents/skills/.",
+        "source": {
+          "label": "VS Code agent skills",
+          "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
+        }
+      }
+    ],
+    "sources": [
+      {
+        "label": "Agent Skills specification",
+        "url": "https://agentskills.io/specification"
+      },
+      {
+        "label": "Agent Skills overview",
+        "url": "https://agentskills.io/home"
+      },
+      {
+        "label": "Claude Code skills",
+        "url": "https://code.claude.com/docs/en/skills"
+      },
+      {
+        "label": "VS Code agent skills",
+        "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
+      }
+    ]
   },
   "studs": [
     {
@@ -169,7 +234,7 @@
     {
       "id": "agent-skill",
       "name": "Agent skill",
-      "category": "other",
+      "category": "skill",
       "summary": "A folder with a SKILL.md file that teaches an agent a repeatable task.",
       "why": "Packs team know-how into portable, version-controlled folders, so any compatible agent follows the same procedure without being told again.",
       "what": "An open format: a folder with a required SKILL.md (name, description, instructions) and optional scripts/, references/ and assets/ folders. The agent reads only name and description at startup, loads the full instructions when a task matches, and opens further files on demand. A skill is not an app. It needs an agent harness to run.",
@@ -215,7 +280,7 @@
     {
       "id": "skill-script",
       "name": "Skill script",
-      "category": "other",
+      "category": "skill",
       "summary": "Executable code in the scripts folder of a skill.",
       "why": "Turns written instructions into repeatable, checkable actions, such as converting a file or calling an API, instead of letting the agent improvise each time.",
       "what": "A script that the agent runs. Python, Bash and JavaScript are common, and the supported languages depend on the harness. The script is executed and does not have to be loaded into the agent's context. It should be self-contained or document its dependencies and give helpful error messages.",
@@ -250,6 +315,9 @@
           "label": "Skill specification",
           "url": "https://agentskills.io/specification"
         }
+      ],
+      "requires": [
+        "agent-skill"
       ]
     }
   ],
@@ -282,7 +350,8 @@
       },
       "tags": [
         "skills"
-      ]
+      ],
+      "icon": "bolt"
     }
   ]
 }

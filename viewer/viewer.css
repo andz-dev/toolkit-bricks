@@ -171,3 +171,10 @@ h3{font-family:var(--font-mono);font-weight:500;font-size:11px;letter-spacing:.0
 .rail{fill:none;stroke:var(--rail);stroke-width:7}
 .railin{fill:none;stroke:var(--bg);stroke-width:3.5}
 .wagon{fill:var(--accent-fill);stroke:var(--accent-ink);stroke-width:.8}
+
+.rmark{position:absolute;top:6px;left:8px;display:inline-flex;color:var(--tf);opacity:.75}
+.research h4{font-family:var(--font-display);font-weight:600;font-size:15px;margin:12px 0 4px}
+.rlist{margin:0;padding-left:18px}
+.rlist li+li{margin-top:6px}
+.rlist a{color:var(--text);text-underline-offset:3px}
+.owner{display:block;font-size:13px;color:var(--muted)}

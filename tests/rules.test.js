@@ -8,7 +8,9 @@ const path = require('path');
 
 const dir = __dirname;
 const design = fs.readFileSync(path.join(dir, '..', 'docs', 'DESIGN.md'), 'utf8');
-const ruleIds = [...design.matchAll(/^\| ([A-Z]-\d+) \|/gm)].map(m => m[1]);
+// Rules in the "Planned" section are not built yet and are not covered.
+const activeDesign = design.split(/^## Planned/m)[0] + (design.split(/^## Guardrails/m)[1] || '');
+const ruleIds = [...activeDesign.matchAll(/^\| ([A-Z]-\d+) \|/gm)].map(m => m[1]);
 const manual = JSON.parse(fs.readFileSync(path.join(dir, 'manual-rules.json'), 'utf8'));
 
 const testedIds = new Set();

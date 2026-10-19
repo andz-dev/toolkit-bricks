@@ -1,10 +1,117 @@
 {
-  "schemaVersion": "1.2",
+  "schemaVersion": "1.3",
   "meta": {
     "title": "n8n and its surroundings",
     "description": "n8n as a self-hosted low-code platform: the Docker or Node.js base it runs on, model endpoints, MCP servers, PostgreSQL and pgvector. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
     "language": "en",
     "updated": "2026-10-19"
+  },
+  "research": {
+    "verifiedOn": "2026-10-19",
+    "facts": [
+      {
+        "text": "The Docker image is n8nio/n8n. Its data lives in /home/node/.n8n and the web interface is on port 5678.",
+        "source": {
+          "label": "n8n Docker",
+          "url": "https://docs.n8n.io/hosting/installation/docker/"
+        }
+      },
+      {
+        "text": "Docker Compose is the route for production. npm is meant for local testing and is deprecated from n8n 3.0.",
+        "source": {
+          "label": "n8n hosting options",
+          "url": "https://docs.n8n.io/deploy/host-n8n"
+        }
+      },
+      {
+        "text": "The npm install needs Node.js 20.19 up to 24.x.",
+        "source": {
+          "label": "n8n npm",
+          "url": "https://docs.n8n.io/deploy/host-n8n/install-options/install-with-npm"
+        }
+      },
+      {
+        "text": "SQLite is the default database. PostgreSQL is supported by setting DB_TYPE=postgresdb.",
+        "source": {
+          "label": "n8n databases",
+          "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
+        }
+      },
+      {
+        "text": "Supported PostgreSQL versions are the latest two (17 and 18 as of July 2026) plus 16.",
+        "source": {
+          "label": "n8n databases",
+          "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
+        }
+      },
+      {
+        "text": "The MCP Server Trigger documents SSE and streamable HTTP.",
+        "source": {
+          "label": "n8n MCP Server Trigger",
+          "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcpTrigger/"
+        }
+      }
+    ],
+    "openPoints": [
+      {
+        "text": "The n8n documentation lists no base URL field for the OpenAI credential. A maintainer reply says custom base URLs already work.",
+        "owner": "Check the credential form in your n8n version"
+      },
+      {
+        "text": "The MCP Client Tool page documents only an SSE endpoint. Check again before relying on streamable HTTP in the client.",
+        "owner": "n8n documentation and the n8n version in use"
+      },
+      {
+        "text": "Not checked: whether the embeddings sub-nodes work with your own model endpoint.",
+        "owner": "Test in your n8n version"
+      },
+      {
+        "text": "Status values and difficulty ratings are proposals.",
+        "owner": "Owners of the real profile"
+      }
+    ],
+    "sources": [
+      {
+        "label": "n8n hosting options",
+        "url": "https://docs.n8n.io/deploy/host-n8n"
+      },
+      {
+        "label": "n8n Docker",
+        "url": "https://docs.n8n.io/hosting/installation/docker/"
+      },
+      {
+        "label": "n8n npm",
+        "url": "https://docs.n8n.io/deploy/host-n8n/install-options/install-with-npm"
+      },
+      {
+        "label": "n8n databases",
+        "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
+      },
+      {
+        "label": "n8n MCP Server Trigger",
+        "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcpTrigger/"
+      },
+      {
+        "label": "n8n MCP Client Tool",
+        "url": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp/"
+      },
+      {
+        "label": "n8n AI Agent node",
+        "url": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/"
+      },
+      {
+        "label": "n8n PGVector node",
+        "url": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstorepgvector/"
+      },
+      {
+        "label": "n8n OpenAI Chat Model",
+        "url": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/"
+      },
+      {
+        "label": "n8n issue 14431",
+        "url": "https://github.com/n8n-io/n8n/issues/14431"
+      }
+    ]
   },
   "studs": [
     {
@@ -283,7 +390,7 @@
     {
       "id": "postgresql",
       "name": "PostgreSQL",
-      "category": "data",
+      "category": "database",
       "summary": "Open-source relational database server that also takes extensions such as pgvector.",
       "why": "Holds structured business data and, with the pgvector extension, the embeddings for semantic search in one reliable system that many tools already support.",
       "what": "A database server with SQL and a catalogue of extensions. PostgreSQL 18 is the current major version (18.6 on 2026-10-19). Each major version is supported for five years. Installers and packages exist for Linux, macOS, Windows and BSD, and there is an official Docker image.",
@@ -332,7 +439,7 @@
     {
       "id": "sqlite",
       "name": "SQLite",
-      "category": "data",
+      "category": "database",
       "summary": "Serverless SQL database in a single file, built into many tools.",
       "why": "Needs no server and no setup, so apps, scripts and agents can keep structured data in one portable file.",
       "what": "A C library that runs inside the application and reads and writes an ordinary file, with ACID transactions. Public domain. Latest release 3.54.1 (2026-10-16). Full-text search (FTS5) is part of the source but not enabled in every build. Vector search needs an extension such as sqlite-vec. n8n uses SQLite by default for its own data.",
@@ -379,7 +486,7 @@
     {
       "id": "pgvector",
       "name": "pgvector",
-      "category": "data",
+      "category": "database",
       "summary": "PostgreSQL extension that stores embeddings and finds similar ones.",
       "why": "Adds semantic search to a database you already run. Documents and their vectors stay together, and no separate vector database is needed.",
       "what": "An open-source extension (version 0.8.7) for PostgreSQL 13 and later. It adds the types vector, halfvec, bit and sparsevec, distance operators (L2, inner product, cosine, L1, Hamming, Jaccard) and HNSW and IVFFlat indexes for approximate search. Exact search works without an index. A vector column can hold up to 16,000 dimensions, an HNSW index on type vector up to 2,000.",
@@ -412,6 +519,9 @@
           "label": "pgvector on GitHub",
           "url": "https://github.com/pgvector/pgvector"
         }
+      ],
+      "runsOn": [
+        "postgresql"
       ]
     }
   ],
@@ -446,7 +556,8 @@
       "tags": [
         "agents",
         "automation"
-      ]
+      ],
+      "icon": "workflow"
     },
     {
       "id": "n8n-on-postgresql",
@@ -477,7 +588,8 @@
       "tags": [
         "hosting",
         "database"
-      ]
+      ],
+      "icon": "database"
     },
     {
       "id": "n8n-document-search",
@@ -510,7 +622,8 @@
       "tags": [
         "retrieval",
         "embeddings"
-      ]
+      ],
+      "icon": "search"
     }
   ]
 }

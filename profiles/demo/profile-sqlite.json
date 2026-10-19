@@ -1,10 +1,85 @@
 {
-  "schemaVersion": "1.2",
+  "schemaVersion": "1.3",
   "meta": {
     "title": "SQLite as database and vector store",
     "description": "SQLite as a serverless database in one file and, with the sqlite-vec extension, as a local vector store. n8n is shown as an example user of its SQL side. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
     "language": "en",
     "updated": "2026-10-19"
+  },
+  "research": {
+    "verifiedOn": "2026-10-19",
+    "facts": [
+      {
+        "text": "SQLite 3.54.1 was released on 2026-10-16.",
+        "source": {
+          "label": "SQLite home",
+          "url": "https://www.sqlite.org/index.html"
+        }
+      },
+      {
+        "text": "SQLite is an in-process library that stores everything in one file. It is in the public domain.",
+        "source": {
+          "label": "About SQLite",
+          "url": "https://www.sqlite.org/about.html"
+        }
+      },
+      {
+        "text": "Loading extensions is off by default.",
+        "source": {
+          "label": "SQLite loadable extensions",
+          "url": "https://www.sqlite.org/loadext.html"
+        }
+      },
+      {
+        "text": "FTS5 full-text search is not enabled in every build.",
+        "source": {
+          "label": "SQLite FTS5",
+          "url": "https://www.sqlite.org/fts5.html"
+        }
+      },
+      {
+        "text": "sqlite-vec is pre-v1, so breaking changes are possible. It uses vec0 virtual tables.",
+        "source": {
+          "label": "sqlite-vec",
+          "url": "https://github.com/asg017/sqlite-vec"
+        }
+      },
+      {
+        "text": "sqlite-vec has bindings for Python, Node.js, Ruby, Go and Rust, under Apache-2.0 and MIT.",
+        "source": {
+          "label": "sqlite-vec",
+          "url": "https://github.com/asg017/sqlite-vec"
+        }
+      }
+    ],
+    "openPoints": [
+      {
+        "text": "Check that the SQLite build you use allows loading extensions before relying on sqlite-vec.",
+        "owner": "Whoever provides the SQLite binary"
+      }
+    ],
+    "sources": [
+      {
+        "label": "SQLite home",
+        "url": "https://www.sqlite.org/index.html"
+      },
+      {
+        "label": "About SQLite",
+        "url": "https://www.sqlite.org/about.html"
+      },
+      {
+        "label": "SQLite loadable extensions",
+        "url": "https://www.sqlite.org/loadext.html"
+      },
+      {
+        "label": "SQLite FTS5",
+        "url": "https://www.sqlite.org/fts5.html"
+      },
+      {
+        "label": "sqlite-vec",
+        "url": "https://github.com/asg017/sqlite-vec"
+      }
+    ]
   },
   "studs": [
     {
@@ -108,7 +183,7 @@
     {
       "id": "sqlite",
       "name": "SQLite",
-      "category": "data",
+      "category": "database",
       "summary": "Serverless SQL database in a single file, built into many tools.",
       "why": "Needs no server and no setup, so apps, scripts and agents can keep structured data in one portable file.",
       "what": "A C library that runs inside the application and reads and writes an ordinary file, with ACID transactions. Public domain. Latest release 3.54.1 (2026-10-16). Full-text search (FTS5) is part of the source but not enabled in every build. Vector search needs an extension such as sqlite-vec. n8n uses SQLite by default for its own data.",
@@ -156,7 +231,7 @@
     {
       "id": "sqlite-vec",
       "name": "sqlite-vec",
-      "category": "data",
+      "category": "database",
       "summary": "SQLite extension that stores vectors and finds nearest neighbours.",
       "why": "Gives local, file-based apps semantic search without a separate vector database.",
       "what": "A small extension in pure C without dependencies, the successor of sqlite-vss, under Apache-2.0 and MIT. Float, int8 and binary vectors live in vec0 virtual tables. It is pre-v1, so breaking changes are possible. Bindings exist for Python, Node.js, Ruby, Go and Rust. It runs on Linux, macOS, Windows, in browsers via WASM and on Raspberry Pi.",
@@ -189,6 +264,9 @@
           "label": "sqlite-vec on GitHub",
           "url": "https://github.com/asg017/sqlite-vec"
         }
+      ],
+      "runsOn": [
+        "sqlite"
       ]
     },
     {
@@ -276,7 +354,8 @@
       "tags": [
         "embeddings",
         "local"
-      ]
+      ],
+      "icon": "search"
     }
   ]
 }

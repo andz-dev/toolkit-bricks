@@ -1,15 +1,48 @@
 {
-  "schemaVersion": "1.2",
+  "schemaVersion": "1.3",
   "meta": {
     "title": "Our AI and automation toolkit",
     "description": "Sample catalog. Texts and ratings are placeholders to be replaced with your own.",
     "language": "en",
     "updated": "2026-10-19"
   },
+  "research": {
+    "verifiedOn": "2026-10-19",
+    "sources": [
+      {
+        "label": "Playwright MCP",
+        "url": "https://github.com/microsoft/playwright-mcp"
+      },
+      {
+        "label": "Microsoft Edge supported operating systems",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-supported-operating-systems"
+      },
+      {
+        "label": "VS Code requirements",
+        "url": "https://code.visualstudio.com/docs/supporting/requirements"
+      },
+      {
+        "label": "Model Context Protocol repositories",
+        "url": "https://github.com/orgs/modelcontextprotocol/repositories"
+      }
+    ]
+  },
   "studs": [
-    { "id": "mcp", "label": "MCP", "description": "Model Context Protocol connection" },
-    { "id": "browser", "label": "Browser", "description": "Drives or reads a web browser" },
-    { "id": "workflow", "label": "Workflow", "description": "Triggers or runs automations" }
+    {
+      "id": "mcp",
+      "label": "MCP",
+      "description": "Model Context Protocol connection"
+    },
+    {
+      "id": "browser",
+      "label": "Browser",
+      "description": "Drives or reads a web browser"
+    },
+    {
+      "id": "workflow",
+      "label": "Workflow",
+      "description": "Triggers or runs automations"
+    }
   ],
   "platforms": [
     {
@@ -24,10 +57,36 @@
         "Open it and sign in to the extensions you need."
       ],
       "difficulty": {
-        "installation": { "stars": 1, "why": "A standard installer, usually already present on developer machines." },
-        "usage": { "stars": 2, "why": "Familiar to developers, new for everyone else." }
+        "installation": {
+          "stars": 1,
+          "why": "A standard installer, usually already present on developer machines."
+        },
+        "usage": {
+          "stars": 2,
+          "why": "Familiar to developers, new for everyone else."
+        }
       },
-      "runsOn": ["desktop-os"]
+      "runsOn": [
+        "desktop-os"
+      ],
+      "research": {
+        "verifiedOn": "2026-10-19",
+        "facts": [
+          {
+            "text": "VS Code runs on 64-bit Windows client versions (not Windows Server), on macOS and on Linux (for example Ubuntu 20.04, Debian 10, RHEL 8, Fedora 36, with glibc 2.28 or newer).",
+            "source": {
+              "label": "VS Code requirements",
+              "url": "https://code.visualstudio.com/docs/supporting/requirements"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "label": "VS Code requirements",
+            "url": "https://code.visualstudio.com/docs/supporting/requirements"
+          }
+        ]
+      }
     },
     {
       "id": "nodejs",
@@ -41,10 +100,27 @@
         "Check it in a terminal with node --version."
       ],
       "difficulty": {
-        "installation": { "stars": 2, "why": "An installer is enough, but versions must match what the tools expect." },
-        "usage": { "stars": 1, "why": "Runs in the background. Nobody has to use it directly." }
+        "installation": {
+          "stars": 2,
+          "why": "An installer is enough, but versions must match what the tools expect."
+        },
+        "usage": {
+          "stars": 1,
+          "why": "Runs in the background. Nobody has to use it directly."
+        }
       },
-      "runsOn": ["desktop-os"]
+      "runsOn": [
+        "desktop-os"
+      ],
+      "research": {
+        "verifiedOn": "2026-10-19",
+        "openPoints": [
+          {
+            "text": "Operating system support of Node.js and Python on desktop systems was not checked.",
+            "owner": "Profile owner"
+          }
+        ]
+      }
     },
     {
       "id": "python",
@@ -52,14 +128,20 @@
       "kind": "runtime",
       "summary": "Runtime for MCP servers built with the Python SDK.",
       "what": "A programming language runtime. MCP servers written with the official Python SDK run on it.",
-      "runsOn": ["desktop-os"]
+      "runsOn": [
+        "desktop-os"
+      ]
     },
     {
       "id": "desktop-os",
       "label": "Desktop OS",
       "kind": "os",
       "summary": "The common desktop operating systems.",
-      "variants": ["Windows", "macOS", "Linux"]
+      "variants": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ]
     }
   ],
   "bricks": [
@@ -76,12 +158,24 @@
         "Switch the chat to agent mode and add the MCP servers it should use."
       ],
       "difficulty": {
-        "installation": { "stars": 2, "why": "A standard extension and a company sign-in. Adding MCP servers is a separate manual step." },
-        "usage": { "stars": 2, "why": "Works through chat. The results still need a human review." }
+        "installation": {
+          "stars": 2,
+          "why": "A standard extension and a company sign-in. Adding MCP servers is a separate manual step."
+        },
+        "usage": {
+          "stars": 2,
+          "why": "Works through chat. The results still need a human review."
+        }
       },
-      "provides": ["workflow"],
-      "accepts": ["mcp"],
-      "runsOn": ["vs-code"],
+      "provides": [
+        "workflow"
+      ],
+      "accepts": [
+        "mcp"
+      ],
+      "runsOn": [
+        "vs-code"
+      ],
       "status": "available",
       "color": "purple"
     },
@@ -98,14 +192,58 @@
         "Select Edge with the msedge browser option."
       ],
       "difficulty": {
-        "installation": { "stars": 3, "why": "The first time, every piece is connected by hand: Node.js, the MCP entry and the browser option." },
-        "usage": { "stars": 2, "why": "Describe the check in plain language, then review what it did." }
+        "installation": {
+          "stars": 3,
+          "why": "The first time, every piece is connected by hand: Node.js, the MCP entry and the browser option."
+        },
+        "usage": {
+          "stars": 2,
+          "why": "Describe the check in plain language, then review what it did."
+        }
       },
-      "provides": ["mcp"],
-      "accepts": ["browser"],
-      "runsOn": ["nodejs"],
+      "provides": [
+        "mcp"
+      ],
+      "accepts": [
+        "browser"
+      ],
+      "runsOn": [
+        "nodejs"
+      ],
       "status": "available",
-      "color": "teal"
+      "color": "teal",
+      "research": {
+        "verifiedOn": "2026-10-19",
+        "facts": [
+          {
+            "text": "Playwright MCP needs Node.js 18 or newer and starts with npx @playwright/mcp@latest.",
+            "source": {
+              "label": "Playwright MCP",
+              "url": "https://github.com/microsoft/playwright-mcp"
+            }
+          },
+          {
+            "text": "The option --browser msedge selects Edge.",
+            "source": {
+              "label": "Playwright MCP",
+              "url": "https://github.com/microsoft/playwright-mcp"
+            }
+          },
+          {
+            "text": "VS Code can add the server from the command line with code --add-mcp.",
+            "source": {
+              "label": "Playwright MCP",
+              "url": "https://github.com/microsoft/playwright-mcp"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "label": "Playwright MCP",
+            "url": "https://github.com/microsoft/playwright-mcp"
+          }
+        ]
+      }
     },
     {
       "id": "custom-mcp-server",
@@ -120,14 +258,43 @@
         "Register it in the MCP settings of your client."
       ],
       "difficulty": {
-        "installation": { "stars": 4, "why": "Someone has to write, test and host the server first." },
-        "usage": { "stars": 2, "why": "Once registered it behaves like any other MCP server." }
+        "installation": {
+          "stars": 4,
+          "why": "Someone has to write, test and host the server first."
+        },
+        "usage": {
+          "stars": 2,
+          "why": "Once registered it behaves like any other MCP server."
+        }
       },
-      "provides": ["mcp"],
+      "provides": [
+        "mcp"
+      ],
       "accepts": [],
-      "runsOn": ["nodejs", "python"],
+      "runsOn": [
+        "nodejs",
+        "python"
+      ],
       "status": "planned",
-      "color": "teal"
+      "color": "teal",
+      "research": {
+        "verifiedOn": "2026-10-19",
+        "facts": [
+          {
+            "text": "The Model Context Protocol project publishes official TypeScript and Python SDKs.",
+            "source": {
+              "label": "Model Context Protocol repositories",
+              "url": "https://github.com/orgs/modelcontextprotocol/repositories"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "label": "Model Context Protocol repositories",
+            "url": "https://github.com/orgs/modelcontextprotocol/repositories"
+          }
+        ]
+      }
     },
     {
       "id": "edge",
@@ -141,21 +308,60 @@
         "Select it by setting the browser option to msedge in Playwright MCP."
       ],
       "difficulty": {
-        "installation": { "stars": 1, "why": "Usually already installed." },
-        "usage": { "stars": 1, "why": "Nothing to learn. It is driven through Playwright MCP." }
+        "installation": {
+          "stars": 1,
+          "why": "Usually already installed."
+        },
+        "usage": {
+          "stars": 1,
+          "why": "Nothing to learn. It is driven through Playwright MCP."
+        }
       },
-      "provides": ["browser"],
+      "provides": [
+        "browser"
+      ],
       "accepts": [],
-      "runsOn": ["desktop-os"],
+      "runsOn": [
+        "desktop-os"
+      ],
       "status": "available",
-      "color": "coral"
+      "color": "coral",
+      "research": {
+        "verifiedOn": "2026-10-19",
+        "facts": [
+          {
+            "text": "Edge runs on Windows, on macOS (macOS 13 or later for Edge 151 and newer) and on 64-bit Linux (Ubuntu 18.04, Debian 10, openSUSE 15.5 or Fedora 39 and later).",
+            "source": {
+              "label": "Microsoft Edge supported operating systems",
+              "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-supported-operating-systems"
+            }
+          },
+          {
+            "text": "Chromebooks are not supported.",
+            "source": {
+              "label": "Microsoft Edge supported operating systems",
+              "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-supported-operating-systems"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "label": "Microsoft Edge supported operating systems",
+            "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-supported-operating-systems"
+          }
+        ]
+      }
     }
   ],
   "recipes": [
     {
       "id": "browser-checks-without-code",
       "title": "Browser checks without test code",
-      "bricks": ["github-copilot", "playwright-mcp", "edge"],
+      "bricks": [
+        "github-copilot",
+        "playwright-mcp",
+        "edge"
+      ],
       "why": "People can check internal web apps by describing the check in plain language, instead of waiting for someone to write test scripts.",
       "what": "Copilot receives the request and calls Playwright MCP. Playwright drives Edge through the steps and reports back.",
       "how": [
@@ -166,10 +372,20 @@
       ],
       "example": "Ask Copilot to log in to the portal and confirm the monthly report page loads.",
       "difficulty": {
-        "installation": { "stars": 3, "why": "The initial manual connection of all tools: Node.js, the MCP entry, the browser option and Copilot agent mode." },
-        "usage": { "stars": 2, "why": "Describe the check in plain language and review the result." }
+        "installation": {
+          "stars": 3,
+          "why": "The initial manual connection of all tools: Node.js, the MCP entry, the browser option and Copilot agent mode."
+        },
+        "usage": {
+          "stars": 2,
+          "why": "Describe the check in plain language and review the result."
+        }
       },
-      "tags": ["testing", "browser"]
+      "tags": [
+        "testing",
+        "browser"
+      ],
+      "icon": "globe"
     }
   ]
 }

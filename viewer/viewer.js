@@ -19,9 +19,10 @@ var ICONS={
   x:'<path d="M6 6l12 12M18 6L6 18"/>',
   down:'<path d="M12 5v14"/><path d="M6 13l6 6 6-6"/>',
   up:'<path d="M12 19V5"/><path d="M6 11l6-6 6 6"/>',
-  left:'<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>'
+  left:'<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>',
+  book:'<path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6v13"/><path d="M12 6v13"/><path d="M21 6v13"/>'
 };
-var CAT_ICON={'ai-assistant':'bot',automation:'workflow',browser:'globe',connector:'plug',data:'database',other:'cube'};
+var CAT_ICON={'ai-assistant':'bot',automation:'workflow',browser:'globe',connector:'plug',data:'database',database:'database','agent-component':'layers',skill:'bolt',other:'cube'};
 var KIND_ICON={'host-app':'window',runtime:'cpu',os:'layers',container:'box',cloud:'cloud',other:'cube'};
 var KIND_LABEL={'host-app':'host app',runtime:'runtime',os:'operating system',container:'container',cloud:'cloud',other:'other'};
 var state={cat:null,graph:null,sel:null,back:null,recipe:null,layer:false,layerEl:null};
@@ -59,7 +60,13 @@ function icon(name,size){
   return s;
 }
 function brickIcon(b){return ICONS[b.icon]?b.icon:CAT_ICON[b.category];}
-function verb(p){return p.kind==='host-app'?'running inside':'running on';}
+/* Wording (design rule I-3): inside a brick or a host app, on everything else, needs for requirements. */
+function verb(n,kind){
+  if(kind==='requires')return 'needs';
+  return n&&(n.category||n.kind==='host-app')?'running inside':'running on';
+}
+function httpLinks(list){return (list||[]).filter(function(l){return l&&/^https?:\/\//i.test(l.url||'');});}
+function linkEl(l){return el('a',{href:l.url,target:'_blank',rel:'noopener noreferrer',text:l.label});}
 function add(box,list){list.forEach(function(n){if(n)box.append(n);});}
 
 /* Validation and graph building come from catalog-core.js (shared with the editor). */
@@ -93,9 +100,10 @@ function brickEl(b){
     })):null;
   };
   return el('button',{type:'button',class:'brick tone-'+(b.color||'gray'),dataset:{id:b.id},'aria-pressed':'false',
-      'aria-label':b.name+', '+b.category+(b.status!=='available'?', '+b.status:''),onclick:function(){select(b.id);}},
+      'aria-label':b.name+', '+b.category+(b.status!=='available'?', '+b.status:'')+(b.research?', has research':''),onclick:function(){select(b.id);}},
     ports(b.provides,'out','top'),
     b.status!=='available'?el('span',{class:'tag',text:b.status}):null,
+    b.research?el('span',{class:'rmark','aria-hidden':'true',title:'Has checked facts'},icon('book',13)):null,
     el('span',{class:'ibox'},icon(brickIcon(b),22)),
     el('span',{class:'name',text:b.name}),
     el('span',{class:'cat',text:b.category.replace('-',' ')}),
@@ -206,6 +214,20 @@ function difficultySection(d){
   sec.append(el('p',{class:'muted note',text:'More stars means harder.'}));
   return sec;
 }
+function researchSection(r){
+  if(!r)return null;
+  var sec=el('section',{class:'sec research'},el('h3',{text:'Research'}),el('p',{class:'muted note',text:'Checked on '+r.verifiedOn+'.'}));
+  if(r.facts&&r.facts.length)sec.append(el('h4',{text:'Facts'}),el('ul',{class:'rlist'},r.facts.map(function(f){
+    var src=httpLinks(f.source?[f.source]:[])[0];
+    return el('li',{},f.text,src?[' ',linkEl(src)]:null);
+  })));
+  if(r.openPoints&&r.openPoints.length)sec.append(el('h4',{text:'Open points'}),el('ul',{class:'rlist'},r.openPoints.map(function(o){
+    return el('li',{},o.text,o.owner?el('span',{class:'owner',text:'Who can answer: '+o.owner}):null);
+  })));
+  var links=httpLinks(r.sources);
+  if(links.length)sec.append(el('h4',{text:'Sources'}),el('ul',{class:'rlist'},links.map(function(l){return el('li',{},linkEl(l));})));
+  return sec;
+}
 function toggleRecipe(id){state.recipe=state.recipe===id?null:id;applyFocus();renderDetail();}
 function studChip(id){return el('span',{class:'stud',style:'--c:var(--stud-'+studIndex(id)+')'},icon('plug',14),studLabel(id));}
 function recipeSection(list,title){
@@ -221,7 +243,7 @@ function recipeSection(list,title){
       var body=el('div',{class:'rbody'});
       add(body,explain(r));
       if(r.example)body.append(el('section',{class:'sec'},el('h3',{text:'Example'}),el('p',{class:'txt',text:r.example})));
-      add(body,[difficultySection(r.difficulty)]);
+      add(body,[difficultySection(r.difficulty),researchSection(r.research)]);
       card.append(body);
     }else card.append(el('p',{class:'rsum',text:r.what}));
     card.append(el('div',{class:'mini'},r.bricks.map(function(id){var b=state.graph.byId.get(id);return el('span',{text:b?b.name:id});})));
@@ -239,19 +261,30 @@ function nodeRow(id,dir,pillText){
   return el('button',{type:'button',class:'conn',onclick:function(){select(id,{via:true});}},
     icon(dir,16),el('span',{class:'nm',text:p?p.label:b.name}),el('span',{class:'pill',text:pillText}));
 }
-function whereSection(node){
-  var ids=node.runsOn||[];
-  var sec=el('section',{class:'sec'},el('h3',{text:'Where it runs'}));
-  if(!ids.length){sec.append(el('p',{class:'muted',text:'No infrastructure defined yet.'}));return sec;}
-  if(ids.length>1)sec.append(el('p',{class:'muted',text:'Any one of these is enough.'}));
-  ids.forEach(function(id){sec.append(nodeRow(id,'down',verb(state.graph.platById.get(id))));});
-  return sec;
+function whereSections(node){
+  var runs=node.runsOn||[],needs=node.requires||[],out=[];
+  var nodeOf=function(id){return state.graph.nodeById.get(id);};
+  if(!runs.length&&!needs.length){
+    return [el('section',{class:'sec'},el('h3',{text:'Where it runs'}),el('p',{class:'muted',text:'No infrastructure defined yet.'}))];
+  }
+  if(runs.length){
+    var sec=el('section',{class:'sec'},el('h3',{text:'Where it runs'}));
+    if(runs.length>1)sec.append(el('p',{class:'muted',text:'Any one of these is enough.'}));
+    runs.forEach(function(id){sec.append(nodeRow(id,'down',verb(nodeOf(id))));});
+    out.push(sec);
+  }
+  if(needs.length){
+    var sn=el('section',{class:'sec'},el('h3',{text:'Also needs'}));
+    if(needs.length>1)sn.append(el('p',{class:'muted',text:'All of these are needed.'}));
+    needs.forEach(function(id){sn.append(nodeRow(id,'down','needs'));});
+    out.push(sn);
+  }
+  return out;
 }
 function linksSection(list){
-  var links=(list||[]).filter(function(l){return /^https?:\/\//i.test(l.url||'');});
+  var links=httpLinks(list);
   if(!links.length)return null;
-  return el('section',{class:'sec'},el('h3',{text:'Links'}),
-    el('div',{class:'links'},links.map(function(l){return el('a',{href:l.url,target:'_blank',rel:'noopener noreferrer',text:l.label});})));
+  return el('section',{class:'sec'},el('h3',{text:'Links'}),el('div',{class:'links'},links.map(linkEl)));
 }
 
 /* infrastructure layer: foundation at the bottom, wagons drive upward */
@@ -313,8 +346,8 @@ function drawLayer(wrap){
     svg.append(grp);
     var tmp=sv('path',{d:d});svg.append(tmp);
     var p=tmp.getPointAtLength(tmp.getTotalLength()*0.5);tmp.remove();
-    var target=state.graph.platById.get(e.to);
-    chips.append(el('span',{class:'chip rel',style:'left:'+f(p.x)+'px;top:'+f(p.y)+'px',text:e.altIndex>0?'or':verb(target)}));
+    var target=state.graph.nodeById.get(e.to);
+    chips.append(el('span',{class:'chip rel',style:'left:'+f(p.x)+'px;top:'+f(p.y)+'px',text:e.kind==='requires'?'needs':(e.altIndex>0?'or':verb(target))}));
   });
 }
 function layerSection(cur){
@@ -326,7 +359,7 @@ function layerSection(cur){
     return sec;
   }
   var lw=layerEl(cur);
-  sec.append(lw,el('p',{class:'muted note',text:(state.graph.platById.has(cur)?'Showing what runs directly on this platform. ':'')+'The foundation is at the bottom. Wagons drive upward, from what carries to what is carried. Select an item to read about it.'}));
+  sec.append(lw,el('p',{class:'muted note',text:(state.graph.runs.some(function(e){return e.to===cur;})?'Showing what runs directly on this item. ':'')+'The foundation is at the bottom. Wagons drive upward, from what carries to what is carried. Select an item to read about it.'}));
   state.layerEl=lw;
   requestAnimationFrame(function(){drawLayer(lw);});
   return sec;
@@ -336,7 +369,7 @@ function renderDetail(){
   var box=$('#detail');box.replaceChildren();
   state.layerEl=null;
   var cat=state.cat,g=state.graph;
-  var hasPlats=g.platById.size>0;
+  var hasPlats=g.platById.size>0||g.runs.length>0;
   box.append(el('div',{class:'ptop'},
     hasPlats?el('button',{type:'button',class:'tog','aria-pressed':String(state.layer),onclick:function(){state.layer=!state.layer;renderDetail();}},icon('rails',16),'Infrastructure layer'):el('span'),
     state.sel?el('button',{class:'close',type:'button','aria-label':'Close details',onclick:closeDetail},icon('x',16)):null));
@@ -345,9 +378,10 @@ function renderDetail(){
       el('div',{class:'empty'},el('span',{class:'bolt'},icon('bolt',22)),el('h2',{text:'Pick a brick'}),
         el('p',{text:'Select a brick to see why it matters, what it is and how to get started.'+(hasPlats?' Switch on the infrastructure layer to see what it runs on.':'')})),
       recipeSection(cat.recipes,'Setups'));
+    add(box,[researchSection(cat.research)]);
     return;
   }
-  var backNode=state.back&&(g.byId.get(state.back)||g.platById.get(state.back));
+  var backNode=state.back&&g.nodeById.get(state.back);
   if(backNode)box.append(el('button',{type:'button',class:'back',onclick:function(){select(state.back,{via:true,back:null});}},icon('left',14),'Back to '+(backNode.name||backNode.label)));
   var p=g.platById.get(state.sel);
   if(p){
@@ -359,9 +393,9 @@ function renderDetail(){
       el('p',{class:'summary',text:p.summary}));
     if(state.layer)box.append(layerSection(p.id));
     add(box,explain(p));
-    add(box,[difficultySection(p.difficulty)]);
+    add(box,[difficultySection(p.difficulty),researchSection(p.research)]);
     if(p.variants&&p.variants.length)box.append(el('section',{class:'sec'},el('h3',{text:'Variants'}),el('div',{class:'tags'},p.variants.map(function(v){return el('span',{class:'pill',text:v});}))));
-    if((p.runsOn||[]).length)box.append(whereSection(p));
+    if((p.runsOn||[]).length||(p.requires||[]).length)add(box,whereSections(p));
     if(here.length)box.append(el('section',{class:'sec'},el('h3',{text:'Running here'}),here.map(function(n){return nodeRow(n.id,'up',n.name?n.category.replace('-',' '):KIND_LABEL[n.kind]);})));
     add(box,[linksSection(p.links)]);
     return;
@@ -377,12 +411,14 @@ function renderDetail(){
     el('p',{class:'summary',text:b.summary}));
   if(state.layer)box.append(layerSection(b.id));
   add(box,explain(b));
-  add(box,[difficultySection(b.difficulty)]);
+  add(box,[difficultySection(b.difficulty),researchSection(b.research)]);
   box.append(el('section',{class:'sec'},el('h3',{text:'Offers'}),
     b.provides.length?el('div',{class:'tags'},b.provides.map(studChip)):el('p',{class:'muted',text:'Nothing other bricks can plug into.'})));
   box.append(el('section',{class:'sec'},el('h3',{text:'Needs'}),
     b.accepts.length?el('div',{class:'tags'},b.accepts.map(studChip)):el('p',{class:'muted',text:'Works on its own.'})));
-  if(hasPlats)box.append(whereSection(b));
+  if(hasPlats)add(box,whereSections(b));
+  var hosted=cat.bricks.concat(cat.platforms).filter(function(n){return(n.runsOn||[]).indexOf(b.id)>=0;});
+  if(hosted.length)box.append(el('section',{class:'sec'},el('h3',{text:'Running inside it'}),hosted.map(function(n){return nodeRow(n.id,'up',n.name?n.category.replace('-',' '):KIND_LABEL[n.kind]);})));
   if(uses.length)box.append(el('section',{class:'sec'},el('h3',{text:'Uses'}),uses.map(function(e){return connRow(e.to,e.stud,'down');})));
   if(usedBy.length)box.append(el('section',{class:'sec'},el('h3',{text:'Used by'}),usedBy.map(function(e){return connRow(e.from,e.stud,'up');})));
   box.append(recipeSection(cat.recipes.filter(function(r){return r.bricks.indexOf(b.id)>=0;}),'Setups with this brick'));

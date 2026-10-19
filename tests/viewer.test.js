@@ -286,17 +286,17 @@ describe('behaviour and look', () => {
 
   it('U-6: a served catalog.json with another version is refused, and the demo is shown instead', async () => {
     const bad = JSON.parse(JSON.stringify(require('../profiles/demo/catalog.json')));
-    bad.schemaVersion = '1.1';
+    bad.schemaVersion = '1.2';
     await open({ url: 'http://localhost:8080/index.html', fetch: async () => ({ ok: true, json: async () => bad }) });
-    assert.match(text(v.$('#notice')), /schemaVersion is "1\.1"/);
+    assert.match(text(v.$('#notice')), /schemaVersion is "1\.2"/);
     assert.equal(v.$$('#board .brick').length, 4);
   });
 
   it('U-6: a catalogue with another schema version is refused with a clear message', async () => {
-    await open({ mutateHtml: h => h.replace('"schemaVersion": "1.2"', '"schemaVersion": "1.1"') });
+    await open({ mutateHtml: h => h.replace('"schemaVersion": "1.3"', '"schemaVersion": "1.2"') });
     assert.equal(v.$$('#board .brick').length, 0);
-    assert.match(text(v.$('#notice')), /schemaVersion is "1\.1"/);
-    assert.match(text(v.$('#notice')), /reads "1\.2"/);
+    assert.match(text(v.$('#notice')), /schemaVersion is "1\.2"/);
+    assert.match(text(v.$('#notice')), /reads "1\.3"/);
   });
 
   it('U-7: every button has a name, and Escape closes the details', async () => {
@@ -340,5 +340,99 @@ describe('placeholder text', () => {
     v.click('.recipe-head');
     await v.settle();
     check('an opened setup');
+  });
+});
+
+// Changes the catalogue built into the page, so a test can try relations the demo does not have.
+const withCatalog = fn => html => html.replace(/(id="catalog-data">\n)([\s\S]*?)(\n<\/script>)/, (_, a, json, b) => {
+  const c = JSON.parse(json);
+  fn(c);
+  return a + JSON.stringify(c, null, 2) + b;
+});
+
+describe('research', () => {
+  it('R-2: a brick shows its research with the verified date, source links and open points', async () => {
+    await open();
+    await pick('edge');
+    assert.ok(h3s().includes('Research'));
+    const sec = v.$('#detail .research');
+    assert.match(text(sec), /Checked on 2026-10-19/);
+    assert.match(text(sec), /Chromebooks are not supported/);
+    const link = sec.querySelector('li a');
+    assert.equal(link.getAttribute('target'), '_blank');
+    assert.match(link.getAttribute('href'), /^https:\/\/learn\.microsoft\.com\//);
+    await pick('edge');
+    await pick('github-copilot');
+    assert.ok(!h3s().includes('Research'), 'no block, no section');
+  });
+
+  it('R-2: a platform shows its open points and who can answer them', async () => {
+    await open();
+    await pick('playwright-mcp');
+    await layerOn();
+    v.click('#detail .lnode[data-id="nodejs"]');
+    await v.settle();
+    assert.match(text(v.$('#detail .research')), /Who can answer: Profile owner/);
+  });
+
+  it('R-2: the start screen shows the research of the whole profile', async () => {
+    await open();
+    assert.match(text(v.$('#detail .research')), /Playwright MCP/);
+  });
+
+  it('R-2: an opened setup can show its own research', async () => {
+    await open({ mutateHtml: withCatalog(c => { c.recipes[0].research = { verifiedOn: '2026-10-19', facts: [{ text: 'A fact about the setup.' }] }; }) });
+    v.click('.recipe-head');
+    await v.settle();
+    assert.match(text(v.$('#detail .recipe .research')), /A fact about the setup\./);
+  });
+
+  it('R-3: bricks with research carry a marker on the board, bricks without do not', async () => {
+    await open();
+    const marked = v.$$('#board .brick').filter(b => b.querySelector('.rmark')).map(b => b.dataset.id).sort();
+    assert.deepEqual(marked, ['custom-mcp-server', 'edge', 'playwright-mcp']);
+    assert.match(v.$('#board .brick[data-id="edge"]').getAttribute('aria-label'), /has research/);
+  });
+
+  it('R-4: only http and https links are shown, and they open safely', async () => {
+    await open({ mutateHtml: withCatalog(c => {
+      c.bricks.find(b => b.id === 'edge').research.sources.push({ label: 'Bad link', url: 'javascript:alert(1)' });
+      c.bricks.find(b => b.id === 'edge').research.facts[0].source = { label: 'Bad fact link', url: 'data:text/html,x' };
+    }) });
+    await pick('edge');
+    const anchors = v.$$('#detail a');
+    assert.ok(anchors.length > 0);
+    for (const a of anchors) {
+      assert.match(a.getAttribute('href'), /^https?:\/\//);
+      assert.match(a.getAttribute('rel'), /noopener/);
+      assert.equal(a.getAttribute('target'), '_blank');
+    }
+    assert.ok(!/Bad link|Bad fact link/.test(text(v.$('#detail'))));
+  });
+});
+
+describe('relations between bricks and platforms', () => {
+  it('I-3: something that runs inside a brick reads "running inside"', async () => {
+    await open({ mutateHtml: withCatalog(c => { c.bricks.find(b => b.id === 'custom-mcp-server').runsOn = ['playwright-mcp']; }) });
+    await pick('custom-mcp-server');
+    await layerOn();
+    const chips = v.$$('#detail .chip.rel').map(text);
+    assert.equal(chips.filter(c => c === 'running inside').length, 1, 'exactly one hop is inside a brick');
+    assert.ok(chips.includes('running on'), 'the chain continues on a platform');
+    assert.match(text(v.$('#detail')), /Playwright MCP\s*running inside/);
+    v.click('#detail .lnode[data-id="playwright-mcp"]');
+    await v.settle();
+    assert.ok(h3s().includes('Running inside it'));
+    assert.match(text(v.$('#detail')), /Custom MCP server/);
+  });
+
+  it('I-8: requirements are marked "needs" in the layer and listed under "Also needs"', async () => {
+    await open({ mutateHtml: withCatalog(c => { c.bricks.find(b => b.id === 'edge').requires = ['nodejs']; }) });
+    await pick('edge');
+    await layerOn();
+    const chips = v.$$('#detail .chip.rel').map(text).sort();
+    assert.deepEqual(chips, ['needs', 'running on', 'running on']); // needs Node.js; Edge and Node.js run on the OS
+    assert.ok(h3s().includes('Also needs'));
+    assert.match(text(v.$('#detail')), /Node\.js\s*needs/);
   });
 });
