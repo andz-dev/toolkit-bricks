@@ -67,6 +67,17 @@ These rules describe what the project must do. Each has an ID. Commits name the 
 | D-4 | A schema change that breaks old files raises the version. The viewer states which version it reads. |
 | D-5 | Warnings (unused studs or platforms, unconnected setups, bricks without infrastructure) never block loading. |
 
+## Guardrails
+
+| Check | Command | What it protects |
+|---|---|---|
+| Tests per rule | `npm test` | Every rule above is named at the start of a test (`V-2: ...`) or listed with a reason in `tests/manual-rules.json`. A rule without either fails `tests/rules.test.js`. |
+| Profile validation | `npm run validate -- <file.json>` | Schema plus the shared cross-reference rules (D-3). Use it on every profile an agent delivers. |
+| Core sync | `npm run sync` | Copies `shared/catalog-core.js` into the viewer. A test fails when they differ. |
+| CI | `.github/workflows/test.yml` | Runs `npm test` on every push and pull request. |
+
+Rules that are only checked by eye: C-1, C-2, T-4 (see `tests/manual-rules.json`). Layout at real screen sizes is not covered by jsdom; check it in a browser until visual snapshots are added.
+
 ## Version history
 
 | Schema | Change |

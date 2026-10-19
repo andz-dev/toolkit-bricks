@@ -30,6 +30,15 @@ A **profile** is one catalogue file that follows `schema/catalog.schema.json`.
 
 To create a real profile, give `docs/profile-template.md` to an agent that can research your tools, and save the result in `profiles/private/`.
 
+## Development
+
+```bash
+npm install
+npm test                      # rule-by-rule tests for viewer, schema and fixtures
+npm run validate -- profiles/demo/catalog.json
+npm run sync                  # after editing shared/catalog-core.js
+```
+
 ## Design
 
 The rules this project follows are in [`docs/DESIGN.md`](docs/DESIGN.md). Each rule has an ID so changes and tests can refer to it.

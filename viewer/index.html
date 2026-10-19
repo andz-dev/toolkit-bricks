@@ -407,12 +407,6 @@ var ICONS={
 var CAT_ICON={'ai-assistant':'bot',automation:'workflow',browser:'globe',connector:'plug',data:'database',other:'cube'};
 var KIND_ICON={'host-app':'window',runtime:'cpu',os:'layers',container:'box',cloud:'cloud',other:'cube'};
 var KIND_LABEL={'host-app':'host app',runtime:'runtime',os:'operating system',container:'container',cloud:'cloud',other:'other'};
-var ID=/^[a-z0-9]+(-[a-z0-9]+)*$/;
-var VERSION='1.2';
-var CATS=['ai-assistant','automation','browser','connector','data','other'];
-var PKINDS=['host-app','runtime','os','container','cloud','other'];
-var STATUS=['available','planned','restricted'];
-var TONES=['purple','teal','coral','pink','gray','blue','green','amber','red'];
 var state={cat:null,graph:null,sel:null,back:null,recipe:null,layer:false,layerEl:null};
 var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 var NS='http://www.w3.org/2000/svg';
@@ -450,6 +444,14 @@ function icon(name,size){
 function brickIcon(b){return ICONS[b.icon]?b.icon:CAT_ICON[b.category];}
 function verb(p){return p.kind==='host-app'?'running inside':'running on';}
 function add(box,list){list.forEach(function(n){if(n)box.append(n);});}
+
+/* @core:begin */
+var ID=/^[a-z0-9]+(-[a-z0-9]+)*$/;
+var VERSION='1.2';
+var CATS=['ai-assistant','automation','browser','connector','data','other'];
+var PKINDS=['host-app','runtime','os','container','cloud','other'];
+var STATUS=['available','planned','restricted'];
+var TONES=['purple','teal','coral','pink','gray','blue','green','amber','red'];
 
 /* ---------- validation ---------- */
 function isObj(v){return v&&typeof v==='object'&&!Array.isArray(v);}
@@ -602,6 +604,7 @@ function buildGraph(c){
     loose:c.bricks.filter(function(b){return!linked.has(b.id);}).map(function(b){return b.id;})
   };
 }
+/* @core:end */
 function studIndex(id){
   var i=state.cat.studs.findIndex(function(s){return s.id===id;});
   return (i<0?0:i)%6;

@@ -1,0 +1,5 @@
+{
+  "C-1": "Contract between editor and viewer. Enforced by the schema and fixture tests as a whole; the editor does not exist yet.",
+  "C-2": "Vocabulary. Nothing to execute.",
+  "T-4": "Plain language is an editorial review, not a machine check."
+}
