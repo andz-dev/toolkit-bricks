@@ -1,0 +1,3 @@
+#!/bin/sh
+# A commit message names the design rule IDs it touches, or says "Rules: none".
+exec node scripts/check-commit-msg.js "$1"

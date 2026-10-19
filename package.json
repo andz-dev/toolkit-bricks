@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "prepare": "node scripts/install-hooks.js",
     "sync": "node scripts/sync.js",
     "build": "node scripts/build-single.js",
     "serve": "node scripts/serve.js",

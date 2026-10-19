@@ -1,0 +1,6 @@
+#!/bin/sh
+# Runs the same tests as CI. Do not skip this hook with --no-verify.
+if ! npm test --silent; then
+  echo "pre-commit: npm test failed. Fix the tests; do not skip the hook." >&2
+  exit 1
+fi

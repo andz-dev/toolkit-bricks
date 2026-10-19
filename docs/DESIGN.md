@@ -61,6 +61,17 @@ These rules describe what the project must do. Each has an ID. Commits name the 
 | U-9 | The `viewer/` folder is self-contained: it runs from any static web server and from `file://`, loads only files next to it, and needs no build step. |
 | U-10 | `npm run build` produces one self-contained HTML file with the same behaviour, for places that need a single file (a published Claude artifact, an email attachment). |
 
+## Viewer: visual system
+
+The tokens are the custom properties at the top of `viewer/viewer.css`: the light set in `:root`, and the dark set twice (the system preference block and `:root[data-theme="dark"]`).
+
+| ID | Rule |
+|---|---|
+| L-1 | Colours exist only as tokens. Outside the token blocks, `viewer/viewer.css` and `viewer/viewer.js` contain no hex, `rgb()` or `hsl()` colour values. |
+| L-2 | Fonts exist only as the tokens `--font-display`, `--font-body` and `--font-mono`. Every `font-family` outside the token blocks is one of them. |
+| L-3 | Every colour token of the light set is also defined in the dark set, and the two dark blocks hold identical values. |
+| L-4 | A stud gets its colour from `--stud-0` to `--stud-5` by its position in the studs list, repeating after six. Code never names a stud colour any other way. |
+
 ## Research
 
 | ID | Rule |
@@ -106,6 +117,8 @@ Not built yet. These rules move into the sections above, with tests, when the pa
 | Browser tests | `npm run test:visual` | Real Chromium: geometry, motion direction (pulses down, trains up), overflow, contrast and screenshots in light and dark at desktop and phone width. Screenshots go to `test-results/screens/`. |
 | Sync | `npm run sync` | Copies `shared/catalog-core.js` to `viewer/catalog-core.js` and embeds `profiles/demo/catalog.json` into `viewer/index.html`. A test fails when they differ. |
 | Single file | `npm run build` | Writes `dist/toolkit-bricks.html` (ignored by git). |
+| Git hooks | `.githooks/`, switched on by `npm install` | `pre-commit` runs `npm test`. `commit-msg` requires a known rule ID or the line `Rules: none` (`scripts/check-commit-msg.js`). They work for every agent and person. Skipping them with `--no-verify` is not allowed. |
+| Visual system | `npm test` (`tests/visual-system.test.js`) | L-1 to L-4: no colour value or font name outside the tokens, dark set complete, stud colours by index. |
 | CI | `.github/workflows/test.yml` | Runs `npm test` on every push and pull request. |
 
 Rules that are only checked by eye: C-1, C-2, T-4 (see `tests/manual-rules.json`). jsdom (`npm test`) has no real layout. Geometry, motion and contrast are checked in Chromium by `npm run test:visual`.
