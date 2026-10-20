@@ -166,7 +166,7 @@ test.describe('dashboard and navigation', () => {
       const w = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
       expect(w[0]).toBeLessThanOrEqual(w[1]);
       const boxes = await page.locator('#dash .box').evaluateAll(els => els.map(e => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y + window.scrollY, width: r.width, height: r.height }; }));
-      expect(boxes.length).toBe(12);
+      expect(boxes.length).toBe(11);
       for (const b of boxes) { expect(b.x).toBeGreaterThanOrEqual(15.5); expect(b.x + b.width).toBeLessThanOrEqual(vp.width - 15.5); }
       for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) expect(overlaps(boxes[i], boxes[j])).toBe(false);
       expect(problems).toEqual([]);
@@ -223,7 +223,7 @@ test.describe('motion and structure', () => {
     await openViewer(page);
     await page.keyboard.press('Tab');
     const seen = new Set();
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 11; i++) {
       seen.add(await page.evaluate(() => document.activeElement && (document.activeElement.dataset.id || document.activeElement.id || document.activeElement.className)));
       await page.keyboard.press('Tab');
     }
@@ -241,7 +241,7 @@ test.describe('motion and structure', () => {
     // reload while offline may fail for http; the built-in demo must still be there on the loaded page
     await context.setOffline(false);
     await page.goto('/');
-    await expect(page.locator('#dash .box')).toHaveCount(12);
+    await expect(page.locator('#dash .box')).toHaveCount(11);
   });
 });
 

@@ -56,6 +56,8 @@ const invalid = [
     mutate: c => { brick(c, 'edge').requires = ['nope']; } },
   { name: 'bricks that require each other', rule: 'I-4', rejectedBy: ['core'], contains: 'loop',
     mutate: c => { brick(c, 'edge').requires = ['playwright-mcp']; brick(c, 'playwright-mcp').requires = ['edge']; } },
+  { name: 'a requires and a runsOn that close a loop', rule: 'I-4', rejectedBy: ['core'], contains: 'loop',
+    mutate: c => { brick(c, 'edge').requires = ['playwright-mcp']; brick(c, 'playwright-mcp').runsOn = ['edge']; } },
   { name: 'brick that runs on itself', rule: 'I-4', rejectedBy: ['core'], contains: 'loop',
     mutate: c => { brick(c, 'edge').runsOn = ['edge']; } },
   { name: 'unknown category', rule: 'D-3', rejectedBy: ['schema', 'core'], contains: 'unknown category',

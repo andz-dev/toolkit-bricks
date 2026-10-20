@@ -1,13 +1,9 @@
 {
   "schemaVersion": "1.0",
   "title": "AI and automation toolkit",
-  "description": "Demo package: six topics, each with its use cases. Facts were checked on 2026-10-19; texts and ratings are proposals.",
+  "description": "Demo package: two topics, each with its use cases. Facts were checked on 2026-10-19; texts and ratings are proposals.",
   "topics": [
-    { "id": "n8n", "file": "profile-n8n.json", "icon": "workflow" },
-    { "id": "agent-skills", "file": "profile-agent-skills.json", "icon": "bolt" },
-    { "id": "agent-harness", "file": "profile-agent-harness.json", "icon": "bot" },
-    { "id": "postgresql", "file": "profile-postgresql.json", "icon": "database" },
-    { "id": "sqlite", "file": "profile-sqlite.json", "icon": "database" },
+    { "id": "automation-agents-data", "file": "profile-automation-agents-data.json", "icon": "workflow" },
     { "id": "browser-automation", "file": "catalog.json", "icon": "globe" }
   ]
 }

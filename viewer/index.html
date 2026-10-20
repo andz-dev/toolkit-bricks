@@ -38,32 +38,12 @@
   "collection": {
     "schemaVersion": "1.0",
     "title": "AI and automation toolkit",
-    "description": "Demo package: six topics, each with its use cases. Facts were checked on 2026-10-19; texts and ratings are proposals.",
+    "description": "Demo package: two topics, each with its use cases. Facts were checked on 2026-10-19; texts and ratings are proposals.",
     "topics": [
       {
-        "id": "n8n",
-        "file": "profile-n8n.json",
+        "id": "automation-agents-data",
+        "file": "profile-automation-agents-data.json",
         "icon": "workflow"
-      },
-      {
-        "id": "agent-skills",
-        "file": "profile-agent-skills.json",
-        "icon": "bolt"
-      },
-      {
-        "id": "agent-harness",
-        "file": "profile-agent-harness.json",
-        "icon": "bot"
-      },
-      {
-        "id": "postgresql",
-        "file": "profile-postgresql.json",
-        "icon": "database"
-      },
-      {
-        "id": "sqlite",
-        "file": "profile-sqlite.json",
-        "icon": "database"
       },
       {
         "id": "browser-automation",
@@ -73,13 +53,13 @@
     ]
   },
   "profiles": {
-    "profile-n8n.json": {
+    "profile-automation-agents-data.json": {
       "schemaVersion": "1.3",
       "meta": {
-        "title": "n8n and its surroundings",
-        "description": "n8n as a self-hosted low-code platform: the Docker or Node.js base it runs on, model endpoints, MCP servers, PostgreSQL and pgvector. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
+        "title": "Automation, agents and data",
+        "description": "n8n, agent skills and the agent harness, PostgreSQL and SQLite as databases and vector stores. Facts checked on 2026-10-19; texts and ratings are proposals.",
         "language": "en",
-        "updated": "2026-10-19"
+        "updated": "2026-10-20"
       },
       "research": {
         "verifiedOn": "2026-10-19",
@@ -125,6 +105,153 @@
               "label": "n8n MCP Server Trigger",
               "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcpTrigger/"
             }
+          },
+          {
+            "text": "A skill is a folder with a SKILL.md. It needs a name (up to 64 characters, lowercase letters, digits and hyphens, same as the folder) and a description (up to 1,024 characters).",
+            "source": {
+              "label": "Agent Skills specification",
+              "url": "https://agentskills.io/specification"
+            }
+          },
+          {
+            "text": "A skill can add scripts/, references/ and assets/ folders.",
+            "source": {
+              "label": "Agent Skills specification",
+              "url": "https://agentskills.io/specification"
+            }
+          },
+          {
+            "text": "Skills load in three steps: name and description first, then the full instructions, then files on demand.",
+            "source": {
+              "label": "Agent Skills overview",
+              "url": "https://agentskills.io/home"
+            }
+          },
+          {
+            "text": "Many products support skills, but the agent decides whether to use a skill it found.",
+            "source": {
+              "label": "Agent Skills overview",
+              "url": "https://agentskills.io/home"
+            }
+          },
+          {
+            "text": "Claude Code reads skills from .claude/skills/ or ~/.claude/skills/.",
+            "source": {
+              "label": "Claude Code skills",
+              "url": "https://code.claude.com/docs/en/skills"
+            }
+          },
+          {
+            "text": "VS Code reads skills from .github/skills/, .claude/skills/ and .agents/skills/.",
+            "source": {
+              "label": "VS Code agent skills",
+              "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
+            }
+          },
+          {
+            "text": "Subagents live in .claude/agents/ in Claude Code.",
+            "source": {
+              "label": "Claude Code subagents",
+              "url": "https://code.claude.com/docs/en/sub-agents"
+            }
+          },
+          {
+            "text": "Dynamic workflows run up to 16 agents at once and up to 1,000 per run.",
+            "source": {
+              "label": "Claude Code workflows",
+              "url": "https://code.claude.com/docs/en/workflows"
+            }
+          },
+          {
+            "text": "CLAUDE.md is the instruction file in Claude Code. AGENTS.md can be read in its place.",
+            "source": {
+              "label": "Claude Code overview",
+              "url": "https://code.claude.com/docs/en/overview"
+            }
+          },
+          {
+            "text": "MCP connects an agent to tools and data through one open standard.",
+            "source": {
+              "label": "MCP introduction",
+              "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
+            }
+          },
+          {
+            "text": "PostgreSQL 18 is current (18.6) and supported until 2030-11-14.",
+            "source": {
+              "label": "PostgreSQL versioning",
+              "url": "https://www.postgresql.org/support/versioning/"
+            }
+          },
+          {
+            "text": "PostgreSQL 14 reaches end of life on 2026-11-12.",
+            "source": {
+              "label": "PostgreSQL versioning",
+              "url": "https://www.postgresql.org/support/versioning/"
+            }
+          },
+          {
+            "text": "An official Docker image exists. For version 18 its data volume is /var/lib/postgresql.",
+            "source": {
+              "label": "Postgres Docker image",
+              "url": "https://hub.docker.com/_/postgres"
+            }
+          },
+          {
+            "text": "pgvector 0.8.7 works with PostgreSQL 13 and later. It adds the types vector, halfvec, bit and sparsevec, and HNSW and IVFFlat indexes.",
+            "source": {
+              "label": "pgvector",
+              "url": "https://github.com/pgvector/pgvector"
+            }
+          },
+          {
+            "text": "Enable pgvector with CREATE EXTENSION vector; in each database that uses it.",
+            "source": {
+              "label": "pgvector",
+              "url": "https://github.com/pgvector/pgvector"
+            }
+          },
+          {
+            "text": "SQLite 3.54.1 was released on 2026-10-16.",
+            "source": {
+              "label": "SQLite home",
+              "url": "https://www.sqlite.org/index.html"
+            }
+          },
+          {
+            "text": "SQLite is an in-process library that stores everything in one file. It is in the public domain.",
+            "source": {
+              "label": "About SQLite",
+              "url": "https://www.sqlite.org/about.html"
+            }
+          },
+          {
+            "text": "Loading extensions is off by default.",
+            "source": {
+              "label": "SQLite loadable extensions",
+              "url": "https://www.sqlite.org/loadext.html"
+            }
+          },
+          {
+            "text": "FTS5 full-text search is not enabled in every build.",
+            "source": {
+              "label": "SQLite FTS5",
+              "url": "https://www.sqlite.org/fts5.html"
+            }
+          },
+          {
+            "text": "sqlite-vec is pre-v1, so breaking changes are possible. It uses vec0 virtual tables.",
+            "source": {
+              "label": "sqlite-vec",
+              "url": "https://github.com/asg017/sqlite-vec"
+            }
+          },
+          {
+            "text": "sqlite-vec has bindings for Python, Node.js, Ruby, Go and Rust, under Apache-2.0 and MIT.",
+            "source": {
+              "label": "sqlite-vec",
+              "url": "https://github.com/asg017/sqlite-vec"
+            }
           }
         ],
         "openPoints": [
@@ -143,6 +270,22 @@
           {
             "text": "Status values and difficulty ratings are proposals.",
             "owner": "Owners of the real profile"
+          },
+          {
+            "text": "Subagent, dynamic workflow and hook details come from Claude Code documentation only.",
+            "owner": "Check the documentation of the harness you use"
+          },
+          {
+            "text": "GitHub Copilot was verified for skills only.",
+            "owner": "Check the Copilot documentation if this profile should cover it"
+          },
+          {
+            "text": "PostgreSQL retires its oldest major version each November. Re-check version numbers and the range n8n supports before each release.",
+            "owner": "Profile owner"
+          },
+          {
+            "text": "Check that the SQLite build you use allows loading extensions before relying on sqlite-vec.",
+            "owner": "Whoever provides the SQLite binary"
           }
         ],
         "sources": [
@@ -185,6 +328,74 @@
           {
             "label": "n8n issue 14431",
             "url": "https://github.com/n8n-io/n8n/issues/14431"
+          },
+          {
+            "label": "Agent Skills specification",
+            "url": "https://agentskills.io/specification"
+          },
+          {
+            "label": "Agent Skills overview",
+            "url": "https://agentskills.io/home"
+          },
+          {
+            "label": "Claude Code skills",
+            "url": "https://code.claude.com/docs/en/skills"
+          },
+          {
+            "label": "VS Code agent skills",
+            "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
+          },
+          {
+            "label": "Claude Code overview",
+            "url": "https://code.claude.com/docs/en/overview"
+          },
+          {
+            "label": "Claude Code subagents",
+            "url": "https://code.claude.com/docs/en/sub-agents"
+          },
+          {
+            "label": "Claude Code workflows",
+            "url": "https://code.claude.com/docs/en/workflows"
+          },
+          {
+            "label": "MCP introduction",
+            "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
+          },
+          {
+            "label": "PostgreSQL versioning",
+            "url": "https://www.postgresql.org/support/versioning/"
+          },
+          {
+            "label": "PostgreSQL download",
+            "url": "https://www.postgresql.org/download/"
+          },
+          {
+            "label": "Postgres Docker image",
+            "url": "https://hub.docker.com/_/postgres"
+          },
+          {
+            "label": "pgvector",
+            "url": "https://github.com/pgvector/pgvector"
+          },
+          {
+            "label": "SQLite home",
+            "url": "https://www.sqlite.org/index.html"
+          },
+          {
+            "label": "About SQLite",
+            "url": "https://www.sqlite.org/about.html"
+          },
+          {
+            "label": "SQLite loadable extensions",
+            "url": "https://www.sqlite.org/loadext.html"
+          },
+          {
+            "label": "SQLite FTS5",
+            "url": "https://www.sqlite.org/fts5.html"
+          },
+          {
+            "label": "sqlite-vec",
+            "url": "https://github.com/asg017/sqlite-vec"
           }
         ]
       },
@@ -218,6 +429,36 @@
           "id": "pg-extension",
           "label": "Postgres extension",
           "description": "Extension slot of a PostgreSQL server"
+        },
+        {
+          "id": "skill",
+          "label": "Skill",
+          "description": "Agent skill folder with a SKILL.md file"
+        },
+        {
+          "id": "script",
+          "label": "Script",
+          "description": "Executable code that an agent runs"
+        },
+        {
+          "id": "subagent",
+          "label": "Subagent",
+          "description": "Helper agent with its own context and tools"
+        },
+        {
+          "id": "instructions",
+          "label": "Instructions",
+          "description": "Standing instruction file the agent reads at the start"
+        },
+        {
+          "id": "hook",
+          "label": "Hook",
+          "description": "Shell command the harness runs before or after an action"
+        },
+        {
+          "id": "sqlite-extension",
+          "label": "SQLite extension",
+          "description": "Loadable extension for a SQLite connection"
         }
       ],
       "platforms": [
@@ -323,6 +564,37 @@
             {
               "label": "Python",
               "url": "https://www.python.org/"
+            }
+          ]
+        },
+        {
+          "id": "vs-code",
+          "label": "VS Code",
+          "kind": "host-app",
+          "summary": "Code editor that hosts Copilot, Claude Code and other agent extensions.",
+          "why": "Editor-based agents do not run on their own. Everyone who uses them needs the editor.",
+          "what": "Microsoft's code editor. Extensions such as GitHub Copilot and the Claude Code extension run inside it.",
+          "how": [
+            "Install VS Code from the company software portal or the official download page.",
+            "Open it and sign in to the extensions you need."
+          ],
+          "difficulty": {
+            "installation": {
+              "stars": 1,
+              "why": "A standard installer, usually already present on developer machines."
+            },
+            "usage": {
+              "stars": 2,
+              "why": "Familiar to developers, new for everyone else."
+            }
+          },
+          "runsOn": [
+            "desktop-os"
+          ],
+          "links": [
+            {
+              "label": "VS Code",
+              "url": "https://code.visualstudio.com/"
             }
           ]
         }
@@ -535,7 +807,8 @@
             }
           },
           "provides": [
-            "sql"
+            "sql",
+            "sqlite-extension"
           ],
           "accepts": [],
           "runsOn": [
@@ -598,343 +871,7 @@
           "runsOn": [
             "postgresql"
           ]
-        }
-      ],
-      "recipes": [
-        {
-          "id": "n8n-agent-with-mcp-tools",
-          "title": "AI agent workflow with MCP tools",
-          "bricks": [
-            "n8n",
-            "openai-compatible-endpoint",
-            "mcp-server"
-          ],
-          "why": "An automation can let a language model decide which tools to call, so routine multi-step work needs no hand-written branching.",
-          "what": "n8n's AI Agent node gets a chat model from the endpoint and calls the tools of an MCP server through the MCP Client Tool node.",
-          "how": [
-            "Start n8n in Docker.",
-            "Create the credential for your model endpoint.",
-            "Add an AI Agent node with a chat model and an MCP Client Tool node that points to your MCP server.",
-            "Choose which tools the agent may use and run the workflow."
-          ],
-          "example": "An agent reads a support mail, looks the customer up through an MCP server and drafts a reply.",
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "Docker, the credential and the MCP connection are all set up by hand the first time."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "Agent behaviour must be tested and the tool calls reviewed."
-            }
-          },
-          "tags": [
-            "agents",
-            "automation"
-          ],
-          "icon": "workflow"
         },
-        {
-          "id": "n8n-on-postgresql",
-          "title": "n8n with PostgreSQL storage",
-          "bricks": [
-            "n8n",
-            "postgresql"
-          ],
-          "why": "n8n keeps workflows, credentials and runs in SQLite by default. PostgreSQL is the documented alternative for setups that need more than a single file.",
-          "what": "n8n is switched to PostgreSQL with DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables. The n8n data folder still has to be kept, for the encryption key and logs.",
-          "how": [
-            "Start a PostgreSQL server or container with a database and user for n8n.",
-            "Set DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables for the n8n container.",
-            "Keep the /home/node/.n8n volume.",
-            "Start n8n and check that it connects."
-          ],
-          "example": "A Docker Compose file starts PostgreSQL and n8n side by side.",
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "Two services, their variables and two persistent volumes must fit together."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "After the setup nothing changes for the people who build workflows."
-            }
-          },
-          "tags": [
-            "hosting",
-            "database"
-          ],
-          "icon": "database"
-        },
-        {
-          "id": "n8n-document-search",
-          "title": "Question answering over your own documents",
-          "bricks": [
-            "n8n",
-            "openai-compatible-endpoint",
-            "pgvector",
-            "postgresql"
-          ],
-          "why": "People get answers from their own documents without a separate vector database. The text and its vectors stay in a database the team already runs.",
-          "what": "n8n's PGVector Vector Store node inserts documents into a Postgres table and searches them. A chat model from the endpoint writes the answer from the hits.",
-          "how": [
-            "Run PostgreSQL and enable pgvector with CREATE EXTENSION vector;",
-            "Add a Postgres credential in n8n.",
-            "Build one workflow that inserts documents with the PGVector Vector Store node, and one agent workflow that searches it as a tool.",
-            "Ask a question and check the answer against the source documents."
-          ],
-          "example": "Employees ask the agent about internal handbook rules and get answers taken from the handbook text.",
-          "difficulty": {
-            "installation": {
-              "stars": 4,
-              "why": "Several pieces must work together: PostgreSQL, the extension, an embeddings model, document loading and the n8n credentials."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "Quality depends on how documents are split and searched, which needs testing."
-            }
-          },
-          "tags": [
-            "retrieval",
-            "embeddings"
-          ],
-          "icon": "search"
-        }
-      ]
-    },
-    "profile-agent-skills.json": {
-      "schemaVersion": "1.3",
-      "meta": {
-        "title": "Agent skills",
-        "description": "Agent skills are no classic app: a folder with a SKILL.md, and often scripts. They need an agent harness to be invoked and an OS and runtime for their scripts. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
-        "language": "en",
-        "updated": "2026-10-19"
-      },
-      "research": {
-        "verifiedOn": "2026-10-19",
-        "facts": [
-          {
-            "text": "A skill is a folder with a SKILL.md. It needs a name (up to 64 characters, lowercase letters, digits and hyphens, same as the folder) and a description (up to 1,024 characters).",
-            "source": {
-              "label": "Agent Skills specification",
-              "url": "https://agentskills.io/specification"
-            }
-          },
-          {
-            "text": "A skill can add scripts/, references/ and assets/ folders.",
-            "source": {
-              "label": "Agent Skills specification",
-              "url": "https://agentskills.io/specification"
-            }
-          },
-          {
-            "text": "Skills load in three steps: name and description first, then the full instructions, then files on demand.",
-            "source": {
-              "label": "Agent Skills overview",
-              "url": "https://agentskills.io/home"
-            }
-          },
-          {
-            "text": "Many products support skills, but the agent decides whether to use a skill it found.",
-            "source": {
-              "label": "Agent Skills overview",
-              "url": "https://agentskills.io/home"
-            }
-          },
-          {
-            "text": "Claude Code reads skills from .claude/skills/ or ~/.claude/skills/.",
-            "source": {
-              "label": "Claude Code skills",
-              "url": "https://code.claude.com/docs/en/skills"
-            }
-          },
-          {
-            "text": "VS Code reads skills from .github/skills/, .claude/skills/ and .agents/skills/.",
-            "source": {
-              "label": "VS Code agent skills",
-              "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
-            }
-          }
-        ],
-        "sources": [
-          {
-            "label": "Agent Skills specification",
-            "url": "https://agentskills.io/specification"
-          },
-          {
-            "label": "Agent Skills overview",
-            "url": "https://agentskills.io/home"
-          },
-          {
-            "label": "Claude Code skills",
-            "url": "https://code.claude.com/docs/en/skills"
-          },
-          {
-            "label": "VS Code agent skills",
-            "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
-          }
-        ]
-      },
-      "studs": [
-        {
-          "id": "skill",
-          "label": "Skill",
-          "description": "Agent skill folder with a SKILL.md file"
-        },
-        {
-          "id": "script",
-          "label": "Script",
-          "description": "Executable code that an agent runs"
-        }
-      ],
-      "platforms": [
-        {
-          "id": "desktop-os",
-          "label": "Desktop OS",
-          "kind": "os",
-          "summary": "The common desktop operating systems.",
-          "variants": [
-            "Windows",
-            "macOS",
-            "Linux"
-          ]
-        },
-        {
-          "id": "vs-code",
-          "label": "VS Code",
-          "kind": "host-app",
-          "summary": "Code editor that hosts Copilot, Claude Code and other agent extensions.",
-          "why": "Editor-based agents do not run on their own. Everyone who uses them needs the editor.",
-          "what": "Microsoft's code editor. Extensions such as GitHub Copilot and the Claude Code extension run inside it.",
-          "how": [
-            "Install VS Code from the company software portal or the official download page.",
-            "Open it and sign in to the extensions you need."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 1,
-              "why": "A standard installer, usually already present on developer machines."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "Familiar to developers, new for everyone else."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "VS Code",
-              "url": "https://code.visualstudio.com/"
-            }
-          ]
-        },
-        {
-          "id": "agent-harness",
-          "label": "Agent harness",
-          "kind": "host-app",
-          "summary": "The program that runs the agent and loads its skills.",
-          "why": "A skill is only text and files until a harness loads it. The harness decides when a skill applies and runs its scripts.",
-          "what": "For example Claude Code or GitHub Copilot in VS Code. The Agent Skills format is shared by many products, but the folders where skills are searched differ (for example .claude/skills/ or .github/skills/).",
-          "how": [
-            "Pick a harness that supports Agent Skills. The client list is on agentskills.io.",
-            "Install it and sign in.",
-            "Check where it looks for skills, in the project and in your home folder."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "A standard installer or extension plus a sign-in."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "Prompting, permission prompts and reviewing results take practice."
-            }
-          },
-          "runsOn": [
-            "desktop-os",
-            "vs-code"
-          ],
-          "links": [
-            {
-              "label": "Agent Skills clients",
-              "url": "https://agentskills.io/home"
-            },
-            {
-              "label": "Skills in VS Code",
-              "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
-            },
-            {
-              "label": "Skills in Claude Code",
-              "url": "https://code.claude.com/docs/en/skills"
-            }
-          ]
-        },
-        {
-          "id": "python",
-          "label": "Python",
-          "kind": "runtime",
-          "summary": "Runtime for skill scripts and MCP servers built with the Python SDK.",
-          "why": "Skill scripts and many MCP servers are written in Python, so the interpreter and its packages must exist on the machine.",
-          "what": "A programming language runtime. Skill scripts and MCP servers written with the official Python SDK run on it.",
-          "how": [
-            "Install a Python version that your scripts support.",
-            "Install the packages a script needs, ideally in a virtual environment."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "An installer is enough, but packages and versions differ per script."
-            },
-            "usage": {
-              "stars": 1,
-              "why": "Runs in the background. Nobody has to use it directly."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Python",
-              "url": "https://www.python.org/"
-            }
-          ]
-        },
-        {
-          "id": "nodejs",
-          "label": "Node.js",
-          "kind": "runtime",
-          "summary": "JavaScript runtime for MCP servers, scripts and npm-installed tools.",
-          "why": "Many AI tools start through Node.js (npx or npm), so the runtime has to be there first.",
-          "what": "A JavaScript runtime that runs outside the browser. Every tool states its own version need. n8n installed with npm needs 20.19 up to 24.x.",
-          "how": [
-            "Install a Node.js version that your tools support.",
-            "Check it in a terminal with node --version."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "An installer is enough, but versions must match what the tools expect."
-            },
-            "usage": {
-              "stars": 1,
-              "why": "Runs in the background. Nobody has to use it directly."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Node.js",
-              "url": "https://nodejs.org/"
-            }
-          ]
-        }
-      ],
-      "bricks": [
         {
           "id": "agent-skill",
           "name": "Agent skill",
@@ -1023,263 +960,7 @@
           "requires": [
             "agent-skill"
           ]
-        }
-      ],
-      "recipes": [
-        {
-          "id": "skill-with-script",
-          "title": "A skill with a bundled script",
-          "bricks": [
-            "agent-skill",
-            "skill-script"
-          ],
-          "why": "A written procedure plus a script gives the same result every time, because the agent runs tested code for the exact steps.",
-          "what": "SKILL.md explains when and how to run the script. The agent loads the instructions when a task matches and then executes the script.",
-          "how": [
-            "Write SKILL.md with a specific description.",
-            "Add the script under scripts/ and name its dependencies.",
-            "Install the interpreter and packages on each machine.",
-            "Ask for a task that matches the description and check that the skill is used."
-          ],
-          "example": "A skill converts a folder of scans to text. The agent runs the bundled Python script and reports the files it processed.",
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "The interpreter, packages and the skills folder must be right on every machine."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "Describe the task. The script does the repeatable part."
-            }
-          },
-          "tags": [
-            "skills"
-          ],
-          "icon": "bolt"
-        }
-      ]
-    },
-    "profile-agent-harness.json": {
-      "schemaVersion": "1.3",
-      "meta": {
-        "title": "Agent harness and its components",
-        "description": "The agent harness and its main building blocks: instructions, skills, MCP servers, subagents, workflows and hooks. Follows the Claude Code and VS Code documentation. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
-        "language": "en",
-        "updated": "2026-10-19"
-      },
-      "research": {
-        "verifiedOn": "2026-10-19",
-        "facts": [
-          {
-            "text": "Subagents live in .claude/agents/ in Claude Code.",
-            "source": {
-              "label": "Claude Code subagents",
-              "url": "https://code.claude.com/docs/en/sub-agents"
-            }
-          },
-          {
-            "text": "Dynamic workflows run up to 16 agents at once and up to 1,000 per run.",
-            "source": {
-              "label": "Claude Code workflows",
-              "url": "https://code.claude.com/docs/en/workflows"
-            }
-          },
-          {
-            "text": "CLAUDE.md is the instruction file in Claude Code. AGENTS.md can be read in its place.",
-            "source": {
-              "label": "Claude Code overview",
-              "url": "https://code.claude.com/docs/en/overview"
-            }
-          },
-          {
-            "text": "MCP connects an agent to tools and data through one open standard.",
-            "source": {
-              "label": "MCP introduction",
-              "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
-            }
-          }
-        ],
-        "openPoints": [
-          {
-            "text": "Subagent, dynamic workflow and hook details come from Claude Code documentation only.",
-            "owner": "Check the documentation of the harness you use"
-          },
-          {
-            "text": "GitHub Copilot was verified for skills only.",
-            "owner": "Check the Copilot documentation if this profile should cover it"
-          }
-        ],
-        "sources": [
-          {
-            "label": "Claude Code overview",
-            "url": "https://code.claude.com/docs/en/overview"
-          },
-          {
-            "label": "Claude Code skills",
-            "url": "https://code.claude.com/docs/en/skills"
-          },
-          {
-            "label": "Claude Code subagents",
-            "url": "https://code.claude.com/docs/en/sub-agents"
-          },
-          {
-            "label": "Claude Code workflows",
-            "url": "https://code.claude.com/docs/en/workflows"
-          },
-          {
-            "label": "VS Code agent skills",
-            "url": "https://code.visualstudio.com/docs/copilot/customization/agent-skills"
-          },
-          {
-            "label": "MCP introduction",
-            "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
-          }
-        ]
-      },
-      "studs": [
-        {
-          "id": "mcp",
-          "label": "MCP",
-          "description": "Model Context Protocol connection"
         },
-        {
-          "id": "skill",
-          "label": "Skill",
-          "description": "Agent skill folder with a SKILL.md file"
-        },
-        {
-          "id": "script",
-          "label": "Script",
-          "description": "Executable code that an agent runs"
-        },
-        {
-          "id": "subagent",
-          "label": "Subagent",
-          "description": "Helper agent with its own context and tools"
-        },
-        {
-          "id": "workflow",
-          "label": "Workflow",
-          "description": "Triggers or runs automations"
-        },
-        {
-          "id": "instructions",
-          "label": "Instructions",
-          "description": "Standing instruction file the agent reads at the start"
-        },
-        {
-          "id": "hook",
-          "label": "Hook",
-          "description": "Shell command the harness runs before or after an action"
-        }
-      ],
-      "platforms": [
-        {
-          "id": "desktop-os",
-          "label": "Desktop OS",
-          "kind": "os",
-          "summary": "The common desktop operating systems.",
-          "variants": [
-            "Windows",
-            "macOS",
-            "Linux"
-          ]
-        },
-        {
-          "id": "vs-code",
-          "label": "VS Code",
-          "kind": "host-app",
-          "summary": "Code editor that hosts Copilot, Claude Code and other agent extensions.",
-          "why": "Editor-based agents do not run on their own. Everyone who uses them needs the editor.",
-          "what": "Microsoft's code editor. Extensions such as GitHub Copilot and the Claude Code extension run inside it.",
-          "how": [
-            "Install VS Code from the company software portal or the official download page.",
-            "Open it and sign in to the extensions you need."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 1,
-              "why": "A standard installer, usually already present on developer machines."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "Familiar to developers, new for everyone else."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "VS Code",
-              "url": "https://code.visualstudio.com/"
-            }
-          ]
-        },
-        {
-          "id": "python",
-          "label": "Python",
-          "kind": "runtime",
-          "summary": "Runtime for skill scripts and MCP servers built with the Python SDK.",
-          "why": "Skill scripts and many MCP servers are written in Python, so the interpreter and its packages must exist on the machine.",
-          "what": "A programming language runtime. Skill scripts and MCP servers written with the official Python SDK run on it.",
-          "how": [
-            "Install a Python version that your scripts support.",
-            "Install the packages a script needs, ideally in a virtual environment."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "An installer is enough, but packages and versions differ per script."
-            },
-            "usage": {
-              "stars": 1,
-              "why": "Runs in the background. Nobody has to use it directly."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Python",
-              "url": "https://www.python.org/"
-            }
-          ]
-        },
-        {
-          "id": "nodejs",
-          "label": "Node.js",
-          "kind": "runtime",
-          "summary": "JavaScript runtime for MCP servers, scripts and npm-installed tools.",
-          "why": "Many AI tools start through Node.js (npx or npm), so the runtime has to be there first.",
-          "what": "A JavaScript runtime that runs outside the browser. Every tool states its own version need. n8n installed with npm needs 20.19 up to 24.x.",
-          "how": [
-            "Install a Node.js version that your tools support.",
-            "Check it in a terminal with node --version."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "An installer is enough, but versions must match what the tools expect."
-            },
-            "usage": {
-              "stars": 1,
-              "why": "Runs in the background. Nobody has to use it directly."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Node.js",
-              "url": "https://nodejs.org/"
-            }
-          ]
-        }
-      ],
-      "bricks": [
         {
           "id": "agent-harness",
           "name": "Agent harness",
@@ -1366,135 +1047,6 @@
           ],
           "runsOn": [
             "agent-harness"
-          ]
-        },
-        {
-          "id": "agent-skill",
-          "name": "Agent skill",
-          "category": "skill",
-          "summary": "A folder with a SKILL.md file that teaches an agent a repeatable task.",
-          "why": "Packs team know-how into portable, version-controlled folders, so any compatible agent follows the same procedure without being told again.",
-          "what": "An open format: a folder with a required SKILL.md (name, description, instructions) and optional scripts/, references/ and assets/ folders. The agent reads only name and description at startup, loads the full instructions when a task matches, and opens further files on demand. A skill is not an app. It needs an agent harness to run.",
-          "how": [
-            "Create a folder named like the skill: lowercase letters, digits and hyphens, at most 64 characters.",
-            "Write SKILL.md with name and description in the header. The description says what the skill does and when to use it (at most 1,024 characters).",
-            "Add scripts, references or assets and point to them from SKILL.md with relative paths.",
-            "Put the folder where your harness looks, for example .claude/skills/ in a project or ~/.claude/skills/ for yourself.",
-            "Optionally check the format with the skills-ref library."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "Copy a folder into a skills location. The locations differ per harness."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "The agent decides when to load it, and use is not guaranteed. Descriptions must be specific."
-            }
-          },
-          "provides": [
-            "skill"
-          ],
-          "accepts": [
-            "script"
-          ],
-          "status": "available",
-          "color": "pink",
-          "links": [
-            {
-              "label": "Specification",
-              "url": "https://agentskills.io/specification"
-            },
-            {
-              "label": "Overview",
-              "url": "https://agentskills.io/home"
-            }
-          ],
-          "runsOn": [
-            "agent-harness"
-          ]
-        },
-        {
-          "id": "skill-script",
-          "name": "Skill script",
-          "category": "skill",
-          "summary": "Executable code in the scripts folder of a skill.",
-          "why": "Turns written instructions into repeatable, checkable actions, such as converting a file or calling an API, instead of letting the agent improvise each time.",
-          "what": "A script that the agent runs. Python, Bash and JavaScript are common, and the supported languages depend on the harness. The script is executed and does not have to be loaded into the agent's context. It should be self-contained or document its dependencies and give helpful error messages.",
-          "how": [
-            "Pick a language that the harness supports and the machine has.",
-            "Put the script in the skill's scripts/ folder and document its dependencies.",
-            "Reference it from SKILL.md and say when and how to run it.",
-            "Install the needed packages on every machine where the skill runs."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "Interpreter, packages and permission settings must be right on every machine."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "The agent runs it and people review the result."
-            }
-          },
-          "provides": [
-            "script"
-          ],
-          "accepts": [],
-          "runsOn": [
-            "python",
-            "nodejs"
-          ],
-          "status": "available",
-          "color": "pink",
-          "links": [
-            {
-              "label": "Skill specification",
-              "url": "https://agentskills.io/specification"
-            }
-          ],
-          "requires": [
-            "agent-skill"
-          ]
-        },
-        {
-          "id": "mcp-server",
-          "name": "MCP server",
-          "category": "connector",
-          "summary": "A program that offers tools and data to AI applications over MCP.",
-          "why": "Connects your own systems to an AI agent through one open standard, so each system is wired up once and works in many agents.",
-          "what": "MCP (Model Context Protocol) is an open standard for connecting AI applications to outside systems. An MCP server offers tools, data or prompts. In n8n, the MCP Client Tool node documents an SSE endpoint with bearer, header or OAuth2 authentication.",
-          "how": [
-            "Pick a ready-made server or build one with the official SDK (Node.js or Python).",
-            "Start it, or note its endpoint URL if it runs remotely.",
-            "Register it in the MCP settings of your client and set the authentication.",
-            "Choose which of its tools the agent may use."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "The entry is added by hand to each client, and the server needs Node.js or Python or a remote endpoint."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "Once registered, the agent calls the tools by itself. The results still need review."
-            }
-          },
-          "provides": [
-            "mcp"
-          ],
-          "accepts": [],
-          "runsOn": [
-            "nodejs",
-            "python"
-          ],
-          "status": "available",
-          "color": "teal",
-          "links": [
-            {
-              "label": "What is MCP",
-              "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
-            }
           ]
         },
         {
@@ -1614,9 +1166,180 @@
               "url": "https://code.claude.com/docs/en/hooks"
             }
           ]
+        },
+        {
+          "id": "sqlite-vec",
+          "name": "sqlite-vec",
+          "category": "database",
+          "summary": "SQLite extension that stores vectors and finds nearest neighbours.",
+          "why": "Gives local, file-based apps semantic search without a separate vector database.",
+          "what": "A small extension in pure C without dependencies, the successor of sqlite-vss, under Apache-2.0 and MIT. Float, int8 and binary vectors live in vec0 virtual tables. It is pre-v1, so breaking changes are possible. Bindings exist for Python, Node.js, Ruby, Go and Rust. It runs on Linux, macOS, Windows, in browsers via WASM and on Raspberry Pi.",
+          "how": [
+            "Install the binding for your language or download a release build.",
+            "Enable extension loading in your application. SQLite has it off by default, the sqlite3 shell has it on.",
+            "Load the extension. In the shell: .load ./vec0",
+            "Create a vec0 virtual table, insert vectors, and query with MATCH and ORDER BY distance."
+          ],
+          "difficulty": {
+            "installation": {
+              "stars": 3,
+              "why": "The build must match the platform and be loaded by hand. Pre-v1, so versions should be pinned."
+            },
+            "usage": {
+              "stars": 3,
+              "why": "Embeddings must come from a model, and the interface may still change."
+            }
+          },
+          "provides": [
+            "vector-search"
+          ],
+          "accepts": [
+            "sqlite-extension"
+          ],
+          "status": "available",
+          "color": "green",
+          "links": [
+            {
+              "label": "sqlite-vec on GitHub",
+              "url": "https://github.com/asg017/sqlite-vec"
+            }
+          ],
+          "runsOn": [
+            "sqlite"
+          ]
         }
       ],
       "recipes": [
+        {
+          "id": "n8n-agent-with-mcp-tools",
+          "title": "AI agent workflow with MCP tools",
+          "bricks": [
+            "n8n",
+            "openai-compatible-endpoint",
+            "mcp-server"
+          ],
+          "why": "An automation can let a language model decide which tools to call, so routine multi-step work needs no hand-written branching.",
+          "what": "n8n's AI Agent node gets a chat model from the endpoint and calls the tools of an MCP server through the MCP Client Tool node.",
+          "how": [
+            "Start n8n in Docker.",
+            "Create the credential for your model endpoint.",
+            "Add an AI Agent node with a chat model and an MCP Client Tool node that points to your MCP server.",
+            "Choose which tools the agent may use and run the workflow."
+          ],
+          "example": "An agent reads a support mail, looks the customer up through an MCP server and drafts a reply.",
+          "difficulty": {
+            "installation": {
+              "stars": 3,
+              "why": "Docker, the credential and the MCP connection are all set up by hand the first time."
+            },
+            "usage": {
+              "stars": 3,
+              "why": "Agent behaviour must be tested and the tool calls reviewed."
+            }
+          },
+          "tags": [
+            "agents",
+            "automation"
+          ],
+          "icon": "workflow"
+        },
+        {
+          "id": "n8n-on-postgresql",
+          "title": "n8n with PostgreSQL storage",
+          "bricks": [
+            "n8n",
+            "postgresql"
+          ],
+          "why": "n8n keeps workflows, credentials and runs in SQLite by default. PostgreSQL is the documented alternative for setups that need more than a single file.",
+          "what": "n8n is switched to PostgreSQL with DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables. The n8n data folder still has to be kept, for the encryption key and logs.",
+          "how": [
+            "Start a PostgreSQL server or container with a database and user for n8n.",
+            "Set DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables for the n8n container.",
+            "Keep the /home/node/.n8n volume.",
+            "Start n8n and check that it connects."
+          ],
+          "example": "A Docker Compose file starts PostgreSQL and n8n side by side.",
+          "difficulty": {
+            "installation": {
+              "stars": 3,
+              "why": "Two services, their variables and two persistent volumes must fit together."
+            },
+            "usage": {
+              "stars": 2,
+              "why": "After the setup nothing changes for the people who build workflows."
+            }
+          },
+          "tags": [
+            "hosting",
+            "database"
+          ],
+          "icon": "database"
+        },
+        {
+          "id": "n8n-document-search",
+          "title": "Question answering over your own documents",
+          "bricks": [
+            "n8n",
+            "openai-compatible-endpoint",
+            "pgvector",
+            "postgresql"
+          ],
+          "why": "People get answers from their own documents without a separate vector database. The text and its vectors stay in a database the team already runs.",
+          "what": "n8n's PGVector Vector Store node inserts documents into a Postgres table and searches them. A chat model from the endpoint writes the answer from the hits.",
+          "how": [
+            "Run PostgreSQL and enable pgvector with CREATE EXTENSION vector;",
+            "Add a Postgres credential in n8n.",
+            "Build one workflow that inserts documents with the PGVector Vector Store node, and one agent workflow that searches it as a tool.",
+            "Ask a question and check the answer against the source documents."
+          ],
+          "example": "Employees ask the agent about internal handbook rules and get answers taken from the handbook text.",
+          "difficulty": {
+            "installation": {
+              "stars": 4,
+              "why": "Several pieces must work together: PostgreSQL, the extension, an embeddings model, document loading and the n8n credentials."
+            },
+            "usage": {
+              "stars": 3,
+              "why": "Quality depends on how documents are split and searched, which needs testing."
+            }
+          },
+          "tags": [
+            "retrieval",
+            "embeddings"
+          ],
+          "icon": "search"
+        },
+        {
+          "id": "skill-with-script",
+          "title": "A skill with a bundled script",
+          "bricks": [
+            "agent-skill",
+            "skill-script"
+          ],
+          "why": "A written procedure plus a script gives the same result every time, because the agent runs tested code for the exact steps.",
+          "what": "SKILL.md explains when and how to run the script. The agent loads the instructions when a task matches and then executes the script.",
+          "how": [
+            "Write SKILL.md with a specific description.",
+            "Add the script under scripts/ and name its dependencies.",
+            "Install the interpreter and packages on each machine.",
+            "Ask for a task that matches the description and check that the skill is used."
+          ],
+          "example": "A skill converts a folder of scans to text. The agent runs the bundled Python script and reports the files it processed.",
+          "difficulty": {
+            "installation": {
+              "stars": 3,
+              "why": "The interpreter, packages and the skills folder must be right on every machine."
+            },
+            "usage": {
+              "stars": 2,
+              "why": "Describe the task. The script does the repeatable part."
+            }
+          },
+          "tags": [
+            "skills"
+          ],
+          "icon": "bolt"
+        },
         {
           "id": "team-procedure-as-skill",
           "title": "A team procedure as a shared skill",
@@ -1715,331 +1438,7 @@
             "mcp"
           ],
           "icon": "plug"
-        }
-      ]
-    },
-    "profile-postgresql.json": {
-      "schemaVersion": "1.3",
-      "meta": {
-        "title": "PostgreSQL as database and vector store",
-        "description": "PostgreSQL for structured data and, with the pgvector extension, for embeddings. n8n is shown as an example user. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
-        "language": "en",
-        "updated": "2026-10-19"
-      },
-      "research": {
-        "verifiedOn": "2026-10-19",
-        "facts": [
-          {
-            "text": "PostgreSQL 18 is current (18.6) and supported until 2030-11-14.",
-            "source": {
-              "label": "PostgreSQL versioning",
-              "url": "https://www.postgresql.org/support/versioning/"
-            }
-          },
-          {
-            "text": "PostgreSQL 14 reaches end of life on 2026-11-12.",
-            "source": {
-              "label": "PostgreSQL versioning",
-              "url": "https://www.postgresql.org/support/versioning/"
-            }
-          },
-          {
-            "text": "An official Docker image exists. For version 18 its data volume is /var/lib/postgresql.",
-            "source": {
-              "label": "Postgres Docker image",
-              "url": "https://hub.docker.com/_/postgres"
-            }
-          },
-          {
-            "text": "pgvector 0.8.7 works with PostgreSQL 13 and later. It adds the types vector, halfvec, bit and sparsevec, and HNSW and IVFFlat indexes.",
-            "source": {
-              "label": "pgvector",
-              "url": "https://github.com/pgvector/pgvector"
-            }
-          },
-          {
-            "text": "Enable pgvector with CREATE EXTENSION vector; in each database that uses it.",
-            "source": {
-              "label": "pgvector",
-              "url": "https://github.com/pgvector/pgvector"
-            }
-          }
-        ],
-        "openPoints": [
-          {
-            "text": "PostgreSQL retires its oldest major version each November. Re-check version numbers and the range n8n supports before each release.",
-            "owner": "Profile owner"
-          }
-        ],
-        "sources": [
-          {
-            "label": "PostgreSQL versioning",
-            "url": "https://www.postgresql.org/support/versioning/"
-          },
-          {
-            "label": "PostgreSQL download",
-            "url": "https://www.postgresql.org/download/"
-          },
-          {
-            "label": "Postgres Docker image",
-            "url": "https://hub.docker.com/_/postgres"
-          },
-          {
-            "label": "pgvector",
-            "url": "https://github.com/pgvector/pgvector"
-          },
-          {
-            "label": "n8n databases",
-            "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
-          }
-        ]
-      },
-      "studs": [
-        {
-          "id": "workflow",
-          "label": "Workflow",
-          "description": "Triggers or runs automations"
         },
-        {
-          "id": "sql",
-          "label": "SQL",
-          "description": "Reads and writes data in a SQL database"
-        },
-        {
-          "id": "vector-search",
-          "label": "Vector search",
-          "description": "Stores embeddings and finds similar items"
-        },
-        {
-          "id": "pg-extension",
-          "label": "Postgres extension",
-          "description": "Extension slot of a PostgreSQL server"
-        }
-      ],
-      "platforms": [
-        {
-          "id": "desktop-os",
-          "label": "Desktop OS",
-          "kind": "os",
-          "summary": "The common desktop operating systems.",
-          "variants": [
-            "Windows",
-            "macOS",
-            "Linux"
-          ]
-        },
-        {
-          "id": "docker",
-          "label": "Docker",
-          "kind": "container",
-          "summary": "Container runtime for ready-made images such as n8n and PostgreSQL.",
-          "why": "A container packs a tool with everything it needs, so the machine only needs Docker and no tool-by-tool installation.",
-          "what": "Docker Desktop for Mac, Windows and Linux includes Docker Engine and Docker Compose. On Linux, Engine and Compose can also be installed on their own, which suits machines without a graphical desktop.",
-          "how": [
-            "Install Docker Desktop, or Docker Engine and Compose on a Linux server.",
-            "Create volumes for the data that must survive restarts.",
-            "Start the image with its ports and volumes, or use a Compose file."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "A standard installer. Linux servers use separate Engine and Compose packages."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "Images, volumes, ports and updates need some container knowledge."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Docker docs",
-              "url": "https://docs.docker.com/"
-            }
-          ]
-        },
-        {
-          "id": "nodejs",
-          "label": "Node.js",
-          "kind": "runtime",
-          "summary": "JavaScript runtime for MCP servers, scripts and npm-installed tools.",
-          "why": "Many AI tools start through Node.js (npx or npm), so the runtime has to be there first.",
-          "what": "A JavaScript runtime that runs outside the browser. Every tool states its own version need. n8n installed with npm needs 20.19 up to 24.x.",
-          "how": [
-            "Install a Node.js version that your tools support.",
-            "Check it in a terminal with node --version."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "An installer is enough, but versions must match what the tools expect."
-            },
-            "usage": {
-              "stars": 1,
-              "why": "Runs in the background. Nobody has to use it directly."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Node.js",
-              "url": "https://nodejs.org/"
-            }
-          ]
-        }
-      ],
-      "bricks": [
-        {
-          "id": "postgresql",
-          "name": "PostgreSQL",
-          "category": "database",
-          "summary": "Open-source relational database server that also takes extensions such as pgvector.",
-          "why": "Holds structured business data and, with the pgvector extension, the embeddings for semantic search in one reliable system that many tools already support.",
-          "what": "A database server with SQL and a catalogue of extensions. PostgreSQL 18 is the current major version (18.6 on 2026-10-19). Each major version is supported for five years. Installers and packages exist for Linux, macOS, Windows and BSD, and there is an official Docker image.",
-          "how": [
-            "Pick a supported major version. 18 is current, so check the versioning page.",
-            "Install it from the packages or installer for your OS, or start the official postgres Docker image with POSTGRES_PASSWORD set and a data volume (for 18 the image volume is /var/lib/postgresql).",
-            "Create a database and a user for your application.",
-            "Connect your tool with host, port, database and credentials."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "A server to install, secure and update. In Docker, volumes and the password variable must be right."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "SQL plus users, backups and upgrades need database know-how."
-            }
-          },
-          "provides": [
-            "sql",
-            "pg-extension"
-          ],
-          "accepts": [],
-          "runsOn": [
-            "docker",
-            "desktop-os"
-          ],
-          "status": "available",
-          "color": "blue",
-          "links": [
-            {
-              "label": "Versioning policy",
-              "url": "https://www.postgresql.org/support/versioning/"
-            },
-            {
-              "label": "Download",
-              "url": "https://www.postgresql.org/download/"
-            },
-            {
-              "label": "Official Docker image",
-              "url": "https://hub.docker.com/_/postgres"
-            }
-          ]
-        },
-        {
-          "id": "pgvector",
-          "name": "pgvector",
-          "category": "database",
-          "summary": "PostgreSQL extension that stores embeddings and finds similar ones.",
-          "why": "Adds semantic search to a database you already run. Documents and their vectors stay together, and no separate vector database is needed.",
-          "what": "An open-source extension (version 0.8.7) for PostgreSQL 13 and later. It adds the types vector, halfvec, bit and sparsevec, distance operators (L2, inner product, cosine, L1, Hamming, Jaccard) and HNSW and IVFFlat indexes for approximate search. Exact search works without an index. A vector column can hold up to 16,000 dimensions, an HNSW index on type vector up to 2,000.",
-          "how": [
-            "Install pgvector for your PostgreSQL version: packages, a Docker image such as pgvector/pgvector, or build from source.",
-            "Run CREATE EXTENSION vector; once in each database.",
-            "Create a table with a vector(N) column, where N is the size your embedding model produces.",
-            "Insert embeddings and search with ORDER BY embedding \u003c-> '[...]' LIMIT 5. Add an HNSW or IVFFlat index for approximate search."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "Packages and Docker images exist, then one CREATE EXTENSION command per database."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "Embeddings must come from a model, and distance and index settings need some understanding."
-            }
-          },
-          "provides": [
-            "vector-search"
-          ],
-          "accepts": [
-            "pg-extension"
-          ],
-          "status": "available",
-          "color": "blue",
-          "links": [
-            {
-              "label": "pgvector on GitHub",
-              "url": "https://github.com/pgvector/pgvector"
-            }
-          ],
-          "runsOn": [
-            "postgresql"
-          ]
-        },
-        {
-          "id": "n8n",
-          "name": "n8n",
-          "category": "automation",
-          "summary": "Low-code workflow editor with AI agent nodes, hosted as a container or Node.js app.",
-          "why": "Teams build automations and AI agents by connecting nodes in a visual editor instead of writing code. One tool joins model endpoints, databases and MCP servers.",
-          "what": "A workflow platform you host yourself. Its AI Agent node connects a chat model with tools. It can call external MCP servers (MCP Client Tool) and offer its own tools as an MCP server (MCP Server Trigger). It stores workflows, credentials and runs in SQLite by default, or in PostgreSQL. Docker Compose is the documented route for production. npm installs are for local tests and deprecated from n8n 3.0.",
-          "how": [
-            "Install Docker (Docker Desktop, or Docker Engine and Compose on a Linux server).",
-            "Create a data volume and start the n8nio/n8n image on port 5678 with the volume mounted at /home/node/.n8n. For production use the Docker Compose setup.",
-            "Open http://localhost:5678 and finish the first-time setup.",
-            "Add credentials for your model endpoint and databases, then build a workflow with the AI Agent node."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "Docker, a persistent volume and ports are set up by hand. Production adds Compose, a PostgreSQL database and regular updates (new minor versions most weeks)."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "The editor is visual, but agents, credentials, expressions and tool wiring take practice."
-            }
-          },
-          "provides": [
-            "workflow"
-          ],
-          "accepts": [
-            "sql",
-            "vector-search"
-          ],
-          "runsOn": [
-            "docker",
-            "nodejs"
-          ],
-          "status": "available",
-          "color": "amber",
-          "links": [
-            {
-              "label": "Host n8n",
-              "url": "https://docs.n8n.io/deploy/host-n8n"
-            },
-            {
-              "label": "Docker install",
-              "url": "https://docs.n8n.io/hosting/installation/docker/"
-            },
-            {
-              "label": "MCP Server Trigger",
-              "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcpTrigger/"
-            },
-            {
-              "label": "n8n databases",
-              "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
-            }
-          ]
-        }
-      ],
-      "recipes": [
         {
           "id": "postgres-semantic-search",
           "title": "Semantic search inside PostgreSQL",
@@ -2072,367 +1471,6 @@
           ],
           "icon": "search"
         },
-        {
-          "id": "n8n-on-postgresql",
-          "title": "n8n with PostgreSQL storage",
-          "bricks": [
-            "n8n",
-            "postgresql"
-          ],
-          "why": "n8n keeps workflows, credentials and runs in SQLite by default. PostgreSQL is the documented alternative for setups that need more than a single file.",
-          "what": "n8n is switched to PostgreSQL with DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables. The n8n data folder still has to be kept, for the encryption key and logs.",
-          "how": [
-            "Start a PostgreSQL server or container with a database and user for n8n.",
-            "Set DB_TYPE=postgresdb and the DB_POSTGRESDB_* variables for the n8n container.",
-            "Keep the /home/node/.n8n volume.",
-            "Start n8n and check that it connects."
-          ],
-          "example": "A Docker Compose file starts PostgreSQL and n8n side by side.",
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "Two services, their variables and two persistent volumes must fit together."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "After the setup nothing changes for the people who build workflows."
-            }
-          },
-          "tags": [
-            "hosting",
-            "database"
-          ],
-          "icon": "database"
-        }
-      ]
-    },
-    "profile-sqlite.json": {
-      "schemaVersion": "1.3",
-      "meta": {
-        "title": "SQLite as database and vector store",
-        "description": "SQLite as a serverless database in one file and, with the sqlite-vec extension, as a local vector store. n8n is shown as an example user of its SQL side. Facts checked against vendor documentation on 2026-10-19. Ratings are proposals and status values are illustrative.",
-        "language": "en",
-        "updated": "2026-10-19"
-      },
-      "research": {
-        "verifiedOn": "2026-10-19",
-        "facts": [
-          {
-            "text": "SQLite 3.54.1 was released on 2026-10-16.",
-            "source": {
-              "label": "SQLite home",
-              "url": "https://www.sqlite.org/index.html"
-            }
-          },
-          {
-            "text": "SQLite is an in-process library that stores everything in one file. It is in the public domain.",
-            "source": {
-              "label": "About SQLite",
-              "url": "https://www.sqlite.org/about.html"
-            }
-          },
-          {
-            "text": "Loading extensions is off by default.",
-            "source": {
-              "label": "SQLite loadable extensions",
-              "url": "https://www.sqlite.org/loadext.html"
-            }
-          },
-          {
-            "text": "FTS5 full-text search is not enabled in every build.",
-            "source": {
-              "label": "SQLite FTS5",
-              "url": "https://www.sqlite.org/fts5.html"
-            }
-          },
-          {
-            "text": "sqlite-vec is pre-v1, so breaking changes are possible. It uses vec0 virtual tables.",
-            "source": {
-              "label": "sqlite-vec",
-              "url": "https://github.com/asg017/sqlite-vec"
-            }
-          },
-          {
-            "text": "sqlite-vec has bindings for Python, Node.js, Ruby, Go and Rust, under Apache-2.0 and MIT.",
-            "source": {
-              "label": "sqlite-vec",
-              "url": "https://github.com/asg017/sqlite-vec"
-            }
-          }
-        ],
-        "openPoints": [
-          {
-            "text": "Check that the SQLite build you use allows loading extensions before relying on sqlite-vec.",
-            "owner": "Whoever provides the SQLite binary"
-          }
-        ],
-        "sources": [
-          {
-            "label": "SQLite home",
-            "url": "https://www.sqlite.org/index.html"
-          },
-          {
-            "label": "About SQLite",
-            "url": "https://www.sqlite.org/about.html"
-          },
-          {
-            "label": "SQLite loadable extensions",
-            "url": "https://www.sqlite.org/loadext.html"
-          },
-          {
-            "label": "SQLite FTS5",
-            "url": "https://www.sqlite.org/fts5.html"
-          },
-          {
-            "label": "sqlite-vec",
-            "url": "https://github.com/asg017/sqlite-vec"
-          }
-        ]
-      },
-      "studs": [
-        {
-          "id": "workflow",
-          "label": "Workflow",
-          "description": "Triggers or runs automations"
-        },
-        {
-          "id": "sql",
-          "label": "SQL",
-          "description": "Reads and writes data in a SQL database"
-        },
-        {
-          "id": "vector-search",
-          "label": "Vector search",
-          "description": "Stores embeddings and finds similar items"
-        },
-        {
-          "id": "sqlite-extension",
-          "label": "SQLite extension",
-          "description": "Loadable extension for a SQLite connection"
-        }
-      ],
-      "platforms": [
-        {
-          "id": "desktop-os",
-          "label": "Desktop OS",
-          "kind": "os",
-          "summary": "The common desktop operating systems.",
-          "variants": [
-            "Windows",
-            "macOS",
-            "Linux"
-          ]
-        },
-        {
-          "id": "docker",
-          "label": "Docker",
-          "kind": "container",
-          "summary": "Container runtime for ready-made images such as n8n and PostgreSQL.",
-          "why": "A container packs a tool with everything it needs, so the machine only needs Docker and no tool-by-tool installation.",
-          "what": "Docker Desktop for Mac, Windows and Linux includes Docker Engine and Docker Compose. On Linux, Engine and Compose can also be installed on their own, which suits machines without a graphical desktop.",
-          "how": [
-            "Install Docker Desktop, or Docker Engine and Compose on a Linux server.",
-            "Create volumes for the data that must survive restarts.",
-            "Start the image with its ports and volumes, or use a Compose file."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "A standard installer. Linux servers use separate Engine and Compose packages."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "Images, volumes, ports and updates need some container knowledge."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Docker docs",
-              "url": "https://docs.docker.com/"
-            }
-          ]
-        },
-        {
-          "id": "nodejs",
-          "label": "Node.js",
-          "kind": "runtime",
-          "summary": "JavaScript runtime for MCP servers, scripts and npm-installed tools.",
-          "why": "Many AI tools start through Node.js (npx or npm), so the runtime has to be there first.",
-          "what": "A JavaScript runtime that runs outside the browser. Every tool states its own version need. n8n installed with npm needs 20.19 up to 24.x.",
-          "how": [
-            "Install a Node.js version that your tools support.",
-            "Check it in a terminal with node --version."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 2,
-              "why": "An installer is enough, but versions must match what the tools expect."
-            },
-            "usage": {
-              "stars": 1,
-              "why": "Runs in the background. Nobody has to use it directly."
-            }
-          },
-          "runsOn": [
-            "desktop-os"
-          ],
-          "links": [
-            {
-              "label": "Node.js",
-              "url": "https://nodejs.org/"
-            }
-          ]
-        }
-      ],
-      "bricks": [
-        {
-          "id": "sqlite",
-          "name": "SQLite",
-          "category": "database",
-          "summary": "Serverless SQL database in a single file, built into many tools.",
-          "why": "Needs no server and no setup, so apps, scripts and agents can keep structured data in one portable file.",
-          "what": "A C library that runs inside the application and reads and writes an ordinary file, with ACID transactions. Public domain. Latest release 3.54.1 (2026-10-16). Full-text search (FTS5) is part of the source but not enabled in every build. Vector search needs an extension such as sqlite-vec. n8n uses SQLite by default for its own data.",
-          "how": [
-            "Check whether your tool or language already bundles SQLite. Python does.",
-            "Otherwise download the library or the command-line shell from sqlite.org.",
-            "Open or create a database file. It is created on first use.",
-            "Add extensions when needed. Loading is off by default and the application must switch it on."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 1,
-              "why": "Usually already present, and there is no server to run."
-            },
-            "usage": {
-              "stars": 2,
-              "why": "Plain SQL. Extensions need an extra step."
-            }
-          },
-          "provides": [
-            "sql",
-            "sqlite-extension"
-          ],
-          "accepts": [],
-          "runsOn": [
-            "desktop-os"
-          ],
-          "status": "available",
-          "color": "green",
-          "links": [
-            {
-              "label": "About SQLite",
-              "url": "https://www.sqlite.org/about.html"
-            },
-            {
-              "label": "Loadable extensions",
-              "url": "https://www.sqlite.org/loadext.html"
-            },
-            {
-              "label": "FTS5",
-              "url": "https://www.sqlite.org/fts5.html"
-            }
-          ]
-        },
-        {
-          "id": "sqlite-vec",
-          "name": "sqlite-vec",
-          "category": "database",
-          "summary": "SQLite extension that stores vectors and finds nearest neighbours.",
-          "why": "Gives local, file-based apps semantic search without a separate vector database.",
-          "what": "A small extension in pure C without dependencies, the successor of sqlite-vss, under Apache-2.0 and MIT. Float, int8 and binary vectors live in vec0 virtual tables. It is pre-v1, so breaking changes are possible. Bindings exist for Python, Node.js, Ruby, Go and Rust. It runs on Linux, macOS, Windows, in browsers via WASM and on Raspberry Pi.",
-          "how": [
-            "Install the binding for your language or download a release build.",
-            "Enable extension loading in your application. SQLite has it off by default, the sqlite3 shell has it on.",
-            "Load the extension. In the shell: .load ./vec0",
-            "Create a vec0 virtual table, insert vectors, and query with MATCH and ORDER BY distance."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "The build must match the platform and be loaded by hand. Pre-v1, so versions should be pinned."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "Embeddings must come from a model, and the interface may still change."
-            }
-          },
-          "provides": [
-            "vector-search"
-          ],
-          "accepts": [
-            "sqlite-extension"
-          ],
-          "status": "available",
-          "color": "green",
-          "links": [
-            {
-              "label": "sqlite-vec on GitHub",
-              "url": "https://github.com/asg017/sqlite-vec"
-            }
-          ],
-          "runsOn": [
-            "sqlite"
-          ]
-        },
-        {
-          "id": "n8n",
-          "name": "n8n",
-          "category": "automation",
-          "summary": "Low-code workflow editor with AI agent nodes, hosted as a container or Node.js app.",
-          "why": "Teams build automations and AI agents by connecting nodes in a visual editor instead of writing code. One tool joins model endpoints, databases and MCP servers.",
-          "what": "A workflow platform you host yourself. Its AI Agent node connects a chat model with tools. It can call external MCP servers (MCP Client Tool) and offer its own tools as an MCP server (MCP Server Trigger). It stores workflows, credentials and runs in SQLite by default, or in PostgreSQL. Docker Compose is the documented route for production. npm installs are for local tests and deprecated from n8n 3.0.",
-          "how": [
-            "Install Docker (Docker Desktop, or Docker Engine and Compose on a Linux server).",
-            "Create a data volume and start the n8nio/n8n image on port 5678 with the volume mounted at /home/node/.n8n. For production use the Docker Compose setup.",
-            "Open http://localhost:5678 and finish the first-time setup.",
-            "Add credentials for your model endpoint and databases, then build a workflow with the AI Agent node."
-          ],
-          "difficulty": {
-            "installation": {
-              "stars": 3,
-              "why": "Docker, a persistent volume and ports are set up by hand. Production adds Compose, a PostgreSQL database and regular updates (new minor versions most weeks)."
-            },
-            "usage": {
-              "stars": 3,
-              "why": "The editor is visual, but agents, credentials, expressions and tool wiring take practice."
-            }
-          },
-          "provides": [
-            "workflow"
-          ],
-          "accepts": [
-            "sql"
-          ],
-          "runsOn": [
-            "docker",
-            "nodejs"
-          ],
-          "status": "available",
-          "color": "amber",
-          "links": [
-            {
-              "label": "Host n8n",
-              "url": "https://docs.n8n.io/deploy/host-n8n"
-            },
-            {
-              "label": "Docker install",
-              "url": "https://docs.n8n.io/hosting/installation/docker/"
-            },
-            {
-              "label": "MCP Server Trigger",
-              "url": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcpTrigger/"
-            },
-            {
-              "label": "n8n databases",
-              "url": "https://docs.n8n.io/deploy/host-n8n/configure-n8n/choose-n8ns-database"
-            }
-          ]
-        }
-      ],
-      "recipes": [
         {
           "id": "sqlite-local-semantic-search",
           "title": "Local semantic search in one file",

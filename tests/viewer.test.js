@@ -286,18 +286,18 @@ describe('behaviour and look', () => {
     assert.equal(asked[0], 'collection.json');
     assert.deepEqual(asked.slice(1).sort(), pkg.collection.topics.map(t => t.file).sort());
     assert.equal(text(v.$('#title')), 'Served package');
-    assert.equal(v.$$('#dash .box').length, 12);
+    assert.equal(v.$$('#dash .box').length, 11);
   });
 
   it('N-9: without a collection.json it falls back to the demo package built into the page', async () => {
     await open({ page: '', url: 'http://localhost:8080/index.html', fetch: async () => ({ ok: false, json: async () => ({}) }) });
     assert.equal(text(v.$('#title')), 'AI and automation toolkit');
-    assert.equal(v.$$('#dash .box').length, 12);
+    assert.equal(v.$$('#dash .box').length, 11);
   });
 
   it('U-5: there is nothing to open a file with; the page works from file:// with the built-in package', async () => {
     await open({ page: '' });
-    assert.equal(v.$$('#dash .box').length, 12);
+    assert.equal(v.$$('#dash .box').length, 11);
   });
 
   it('U-6: a served profile with another version is left out with a message, the others are shown', async () => {
@@ -306,7 +306,7 @@ describe('behaviour and look', () => {
     await open({ page: '', url: 'http://localhost:8080/index.html', fetch: serve(pkg) });
     assert.match(text(v.$('#notice')), /catalog\.json was not loaded/);
     assert.match(text(v.$('#notice')), /schemaVersion is "1\.2"/);
-    assert.equal(v.$$('#dash .box').length, 10);
+    assert.equal(v.$$('#dash .box').length, 9);
   });
 
   it('U-6: when no served profile is valid, the built-in demo is shown instead', async () => {
@@ -314,7 +314,7 @@ describe('behaviour and look', () => {
     for (const f of Object.keys(pkg.profiles)) pkg.profiles[f].schemaVersion = '1.2';
     await open({ page: '', url: 'http://localhost:8080/index.html', fetch: serve(pkg) });
     assert.match(text(v.$('#notice')), /No topic could be loaded/);
-    assert.equal(v.$$('#dash .box').length, 12);
+    assert.equal(v.$$('#dash .box').length, 11);
   });
 
   it('U-7: every button has a name, and Escape closes the details', async () => {
@@ -480,7 +480,7 @@ describe('dashboard and use case pages', () => {
     assert.equal(v.$$('#dash .box').length, expected.length);
     assert.ok(v.$('#page').hidden && v.$('#pagenav').hidden);
     for (const b of v.$$('#dash .box')) assert.equal(b.tagName, 'A', 'the whole box is a link');
-    assert.equal(v.$$('#dash .topic')[0].querySelectorAll('.box').length, 3);
+    assert.equal(v.$$('#dash .topic')[0].querySelectorAll('.box').length, expected.filter(e => e.topic === collection.topics[0].id).length);
   });
 
   it('N-2: every use case has its own link; back/forward, bookmarks and shared links work', async () => {

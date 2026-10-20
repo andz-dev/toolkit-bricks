@@ -76,13 +76,19 @@ describe('relations and research in the demo package', () => {
   const load = f => JSON.parse(fs.readFileSync(path.join(root, 'profiles', 'demo', f), 'utf8'));
 
   it('I-4: a brick can run inside another brick (pgvector inside PostgreSQL)', () => {
-    const g = core.buildGraph(load('profile-postgresql.json'));
+    const g = core.buildGraph(load('profile-automation-agents-data.json'));
     assert.ok(g.runs.some(e => e.from === 'pgvector' && e.to === 'postgresql' && e.kind === 'runsOn'));
     assert.ok(g.byId.has('postgresql') && !g.platById.has('postgresql'));
   });
 
+  it('I-4: skills run inside the agent harness, which is a brick and not a platform (D-2)', () => {
+    const g = core.buildGraph(load('profile-automation-agents-data.json'));
+    assert.ok(g.runs.some(e => e.from === 'agent-skill' && e.to === 'agent-harness' && e.kind === 'runsOn'));
+    assert.ok(g.byId.has('agent-harness') && !g.platById.has('agent-harness'));
+  });
+
   it('I-8: a mandatory requirement is its own kind of edge (skill script needs its skill)', () => {
-    const g = core.buildGraph(load('profile-agent-skills.json'));
+    const g = core.buildGraph(load('profile-automation-agents-data.json'));
     assert.ok(g.runs.some(e => e.from === 'skill-script' && e.to === 'agent-skill' && e.kind === 'requires'));
   });
 

@@ -40,7 +40,7 @@ describe('single-file build', () => {
       assert.ok(html.includes('window.CatalogCore') && html.includes('function renderBoard'));
       v = await loadViewer({ htmlPath: out });
       await v.settle();
-      assert.equal(v.$$('#dash .box').length, 12);
+      assert.equal(v.$$('#dash .box').length, 11);
       v.click('#dash .topic:last-child .box:last-child');
       await v.settle();
       assert.equal(v.$$('#board .brick').length, 2);
