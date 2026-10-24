@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toolkit Railway</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="map.css">
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="titles">
+      <p class="kicker">Draft · map view</p>
+      <h1 id="title">Toolkit railway</h1>
+    </div>
+    <div class="tools" role="toolbar" aria-label="Map controls">
+      <button class="btn" id="zoom-out" aria-label="Zoom out" title="Zoom out"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+      <button class="btn" id="zoom-in" aria-label="Zoom in" title="Zoom in"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button>
+      <button class="btn wide" id="fit" aria-label="Show the whole map" title="Show the whole map"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Fit</span></button>
+      <button class="btn wide" id="service" aria-pressed="false" title="Show what runs on each depot"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3 3"><path d="M4 20 20 4"/></svg><span>Service lines</span></button>
+      <button class="btn" id="theme" aria-label="Switch between day and night" title="Day / night"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg></button>
+    </div>
+  </header>
+  <main class="stage" id="stage">
+    <canvas id="map" tabindex="0" aria-label="Isometric railway map of the toolkit. Use the panel to pick a city, industry or depot."></canvas>
+    <p class="hint" id="hint">Drag to move · scroll or pinch to zoom · click a building</p>
+  </main>
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+</div>
+<script src="data.js"></script>
+<script src="map.js"></script>
+</body>
+</html>
