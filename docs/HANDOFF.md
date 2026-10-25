@@ -1,5 +1,7 @@
 # Handoff: frontend improvements and catalogue delivery
 
+> Separate track: the isometric railway map view (branch `map-view-draft`) has its own handoff in [`HANDOFF-MAP-VIEW.md`](HANDOFF-MAP-VIEW.md).
+
 ## Current handoff: frontend review (2026-10-20)
 
 **Next task:** implement the first four fixes below in small, verified increments. This section records a review and proposed work, not completed frontend changes. The earlier catalogue delivery is preserved below.

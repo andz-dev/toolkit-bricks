@@ -2,7 +2,7 @@
 
 Status: **draft**. Nothing here is a design rule yet. The rules live in `docs/DESIGN.md`; when a map rule below is accepted, it moves there with a test (see `AGENTS.md`). The IDs below are proposals and are not accepted by the commit-msg hook.
 
-Prototype: `prototypes/map-view/` (open `index.html`, no build step).
+Prototype: `prototypes/map-view/` (open `index.html`, no build step). State of the work, known issues and next steps: [`HANDOFF-MAP-VIEW.md`](HANDOFF-MAP-VIEW.md).
 
 ## Idea
 
